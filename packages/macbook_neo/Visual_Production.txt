@@ -1,0 +1,24 @@
+Scene 1 — Hook / Reveal
+Background: Minimalist tech studio, dark charcoal walls, single neon citrus strip bouncing off acrylic desk.
+Talent: Host standing three-quarter to camera, держит закрытый Neo (citrus) на вытянутой руке.
+Blocking: Punch-in on реплику «Сюрприз!», параллакс-движение камеры вокруг крышки.
+Overlays: Lower-third «MacBook Neo • легенда 12"» (Inter Bold, white + #F5E64B underline).
+Suggested b-roll cutaway: 01_Neo_Reveal.mp4 → 02_Neo_HelloScreen.mp4 for «выкатила НЕО» + «это разрыв».
+
+Scene 2 — Цена и железо
+Background: Смена на сидячую позу за стеклянным столом, Neo раскрыт на 110°, подсветка из-за спины, чтобы подчеркнуть тонкий профиль.
+Gestures: Hand glide вдоль кромки при словах «меньше килограмма», два пальца постукивают по столу на «тишина».
+Overlays: Стеклянная карточка с 🧠 «M5», 🔋 «<1 кг», ⚡ «Fanless». Жёлто-белый ценник «$999» всплывает рядом.
+Suggested b-roll: 04_Neo_ThinProfile.mp4 и 05_Neo_SilentEdge.mp4 по словам про корпус/тишину.
+
+Scene 3 — Печатная машинка vs порты
+Background: Камера опускается до уровня клавиатуры, warm spotlight на клавиши.
+Gestures: Медленный набор текста, затем ладонь перекрывает боковую грань, показывая единственный порт.
+Overlays: Split-caption «идеальная печатная машинка» слева и «портов мало» справа, иконки 🧠 / 🛡️ для печати и ⚠️ у порта.
+Suggested b-roll: 06_Neo_Keyboard.mp4 (набор) + 08_Neo_SidePort.mp4 (порты).
+
+Scene 4 — Финальный вопрос
+Background: Wide shot, хост облокачивается на стол, рядом на подставке открыт Neo и ценник $999.
+Gestures: Показ одного пальца на «сто баксов дешевле Эйра», открытая ладонь к камере на «Пиши!».
+Overlays: Тёмный карточный CTA «Берём за штуку? Или планшет?» с кнопками «ДА / Сомневаюсь». Добавить Telegram bubble для комментирования.
+Suggested b-roll: 07_Neo_HandPass.mp4 → 09_Neo_ProductTable.mp4 → 10_Neo_CTA.mp4.

@@ -1,0 +1,32 @@
+# Frame images (runtime artifacts)
+frames_*/
+previews/*/
+samsung_clips/
+temp/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.env
+
+# Logs
+logs/
+*.log
+
+# OpenClaw internal
+.openclaw/
+
+# Memory (private)
+memory/
+MEMORY.md
+
+# Misc
+*.zip
+
+yt-comments/token.json
+yt-comments/.env
+yt-comments/bot.log
+model-manager/.env

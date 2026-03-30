@@ -1,0 +1,20 @@
+Card 1 — Title Burst
+- Layout: Full-bleed hero card, gradient #04070D → #111820.
+- Text: "MacBook Neo" (Inter ExtraBold 72pt, white) + subline "Легендарный 12" возвращается" (Inter Medium 30pt, #C7CDD8).
+- Accent: Neon citrus bar #F5E64B behind слово "Neo", icons 🧠 + ⚡ hovering right.
+
+Card 2 — $999 Value Stack
+- Left column "Что входит" (white): bullets «M5 chip», «<1 кг», «Fanless».
+- Right column "За сколько" (#C7CDD8): крупный $999, подпись «–$100 vs Air».
+- Footer pill with 💸 icon + copy "Full spec за "штуку" баксов".
+
+Card 3 — Typewriter vs Ports
+- Split card, dark base.
+- Column A header "Идеальная печатная машинка" (🧠). Checklist: "Magic Keyboard", "All-day battery".
+- Column B header "Компромисс" (⚠️). Bullets: "1× USB‑C", "Адаптер обязателен".
+- Divider line glowing #F5E64B.
+
+Card 4 — CTA Question
+- Dialog bubble centered: «Берём Neo или это дорогой планшет?» (Inter Bold 40pt, white).
+- Two buttons: "Беру" (primary, yellow text on dark), "Сомневаюсь" (outline #C7CDD8).
+- Footer tag with Telegram icon + copy "Пиши в комментах".

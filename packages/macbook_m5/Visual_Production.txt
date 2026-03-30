@@ -1,0 +1,20 @@
+Scene 1 — Hook
+Background: Minimalist tech studio, smoked glass desk, dim teal rim, neon yellow accent strip.
+Character: Host facing camera, standing, slight lean forward, holding closed MacBook Air (Midnight), one hand mid-gesture.
+Action notes: Quick 3-step punch-in synced to "Apple прыгнула…", add floating lower-third "M5 inside".
+Camera: 35mm, f/2.0, handheld micro-dolly.
+
+Scene 2 — Air upgrade rundown
+Background: Same studio, seated at desk, MacBook Air open at 110° showing thin profile.
+Gestures: Hand tracing edge, finger tap on keyboard when озвучиваем батарею.
+Overlays: Pop icons 🧠 (Neural Engine), 🔋 (18h battery), ⚡ (Wi-Fi 7). Show price tag +$100.
+
+Scene 3 — Pro power segment
+Background: Darker lighting, cool backlight, MacBook Pro on riser displaying multi-cam Final Cut timeline.
+Gestures: Host pointing to 3 virtual monitors behind, swipe gesture to reveal "Fusion Architecture" label.
+Overlays: Performance meter with 🛡️ for cooling + 💸 for pro price.
+
+Scene 4 — Verdict / CTA
+Background: Return to wide studio, host leaning on desk, MacBook closed stacks (Air + Pro).
+Gestures: Casual hand wave "апгрейд" vs "ожидание", raise index finger on "предзаказы".
+Overlays: Checklist card (Upgrade? Intel → Да / M3 → Подумай), Telegram CTA bubble.

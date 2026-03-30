@@ -49,9 +49,14 @@ def load_dashboard_config() -> dict:
     """Читает config.json из дашборда. Возвращает пустой dict если файл не найден."""
     if DASHBOARD_CONFIG.exists():
         try:
-            return json.loads(DASHBOARD_CONFIG.read_text(encoding="utf-8"))
+            cfg = json.loads(DASHBOARD_CONFIG.read_text(encoding="utf-8"))
+            ab = cfg.get("antiBan", {})
+            log.info(f"[config] Загружен дашборд: minDelay={ab.get('minDelay')}s maxDelay={ab.get('maxDelay')}s maxPerHour={ab.get('maxRepliesPerHour')}")
+            return cfg
         except Exception as e:
             log.warning(f"Не удалось прочитать dashboard config: {e}")
+    else:
+        log.warning(f"[config] config.json не найден по пути: {DASHBOARD_CONFIG} — используются дефолты из .env")
     return {}
 
 SCOPES = [
@@ -293,7 +298,37 @@ def is_safe(text: str) -> bool:
     lower = text.lower()
     return not any(kw in lower for kw in STOP_KEYWORDS)
 
-def generate_reply(comment_text: str, video_title: str, recent_replies: list[str], video_description: str = "", system_prompt: str = SYSTEM_PROMPT):
+def build_system_prompt(base_prompt: str, toxicity: int, emoji_freq: int, length_bias: int) -> str:
+    """Строит финальный системный промпт с учётом слайдеров дашборда."""
+
+    # Токсичность/ирония (0–100)
+    if toxicity >= 80:
+        tone = "Тон: максимально острый, саркастичный, провокационный. Задевай, не бойся резкости."
+    elif toxicity >= 50:
+        tone = "Тон: умеренно циничный, с иронией. Острый но не грубый."
+    else:
+        tone = "Тон: мягкий, дружелюбный цинизм. Скорее подшучиваешь, чем колешь."
+
+    # Частота эмодзи (0–100)
+    if emoji_freq >= 70:
+        emoji_rule = "Эмодзи: добавляй почти в каждый ответ, 1–2 штуки."
+    elif emoji_freq >= 30:
+        emoji_rule = f"Эмодзи: добавляй примерно в {emoji_freq}% ответов, не более одного."
+    else:
+        emoji_rule = "Эмодзи: почти не используй, максимум в 10% случаев."
+
+    # Длина ответа (0–100, где 0=3-5 слов, 100=2 предложения)
+    if length_bias <= 25:
+        length_rule = "Длина: ВСЕГДА 3–6 слов. Никаких длинных ответов. Максимум одна короткая фраза."
+    elif length_bias <= 60:
+        length_rule = "Длина: чаще 3–8 слов, иногда одно предложение. Не растекайся."
+    else:
+        length_rule = "Длина: 1–2 предложения когда нужно, но не больше. Короткие ответы тоже уместны."
+
+    return f"{base_prompt}\n\n━━━ ТЕКУЩИЕ ПАРАМЕТРЫ ━━━\n{tone}\n{emoji_rule}\n{length_rule}"
+
+
+def generate_reply(comment_text: str, video_title: str, recent_replies: list[str], video_description: str = "", system_prompt: str = SYSTEM_PROMPT, toxicity: int = 65, emoji_freq: int = 40, length_bias: int = 35):
     """Возвращает (reply_text, usage) или (None, None)."""
     if not is_safe(comment_text):
         log.info(f"SKIP (стоп-лист): {comment_text[:60]}")
@@ -305,10 +340,13 @@ def generate_reply(comment_text: str, video_title: str, recent_replies: list[str
 
     client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
 
+    # Строим промпт с учётом слайдеров
+    final_prompt = build_system_prompt(system_prompt, toxicity, emoji_freq, length_bias)
+
     context = ""
     if recent_replies:
         last = recent_replies[-5:]
-        context = "\n\nТвои последние ответы (не повторяй структуру):\n" + "\n".join(f"- {r}" for r in last)
+        context = "\n\nТвои последние ответы (не повторяй структуру и не повторяй слова):\n" + "\n".join(f"- {r}" for r in last)
 
     video_context = f"Название видео: «{video_title}»"
     if video_description:
@@ -317,29 +355,17 @@ def generate_reply(comment_text: str, video_title: str, recent_replies: list[str
     # Определяем тип комментария для подсказки модели
     is_question = any(c in comment_text for c in ["?", "как", "почему", "зачем", "что думаешь", "стоит ли", "можно ли"])
     is_short = len(comment_text.strip()) < 40
-    
+
     if is_short and not is_question:
-        length_hint = (
-            "Комментарий короткий/банальный — ответь 3–7 словами. "
-            "Обязательно: либо риторический вопрос («и что?», «серьёзно?», «уже купил?»), "
-            "либо фактический вопрос в лоб («а ты вообще смотрел видео?»), "
-            "либо ирония/сарказм который заденет и заставит ответить. "
-            "Человек должен захотеть возразить или оправдаться."
-        )
+        length_hint = "Комментарий короткий — ответь коротко и с крючком."
     elif is_question:
-        length_hint = (
-            "Человек задал вопрос или написал развёрнуто — ответь 1–2 предложениями. "
-            "Не просто ответь — заверши провокацией или встречным вопросом чтобы он не мог промолчать."
-        )
+        length_hint = "Задал вопрос — ответь по теме + встречный вопрос или провокация в конце."
     else:
-        length_hint = (
-            "Сам реши длину. Но в любом случае: каждый ответ должен содержать крючок — "
-            "вопрос, ирония, сомнение — что-то что не даст человеку просто поставить лайк и уйти."
-        )
+        length_hint = "Ответь в рамках параметров длины выше. Крючок обязателен."
 
     user_msg = (
         f"{video_context}\n\n"
-        f"Комментарий от пользователя: «{comment_text}»\n"
+        f"Комментарий: «{comment_text}»\n"
         f"{context}\n\n"
         f"{length_hint}\n"
         "Только текст ответа, без кавычек."
@@ -349,7 +375,7 @@ def generate_reply(comment_text: str, video_title: str, recent_replies: list[str
         msg = client.messages.create(
             model="claude-haiku-4-5",
             max_tokens=150,
-            system=system_prompt,
+            system=final_prompt,
             messages=[{"role": "user", "content": user_msg}],
         )
         return msg.content[0].text.strip(), msg.usage
@@ -368,10 +394,87 @@ def is_sleep_time(sleep_start: int = SLEEP_START, sleep_end: int = SLEEP_END) ->
         return sleep_start <= hour < sleep_end
     return hour >= sleep_start or hour < sleep_end
 
+def human_delay(min_s: int, max_s: int, randomize: bool = True) -> float:
+    """Задержка с нормальным распределением — как у живого человека.
+    
+    Большинство ответов приходят через ~середину диапазона,
+    редко — через минимум или максимум. Не равномерно.
+    """
+    if not randomize:
+        return float(min_s)
+    mu = (min_s + max_s) / 2        # среднее
+    sigma = (max_s - min_s) / 4     # стандартное отклонение
+    delay = random.gauss(mu, sigma)
+    return max(min_s, min(max_s, delay))  # clamp в диапазон
+
 def jitter_sleep(min_s: int = JITTER_MIN * 60, max_s: int = JITTER_MAX * 60, randomize: bool = True):
-    delay = random.randint(min_s, max_s) if randomize else min_s
-    log.info(f"Жду {delay // 60} мин {delay % 60} сек перед ответом...")
+    delay = human_delay(min_s, max_s, randomize)
+    log.info(f"Жду {int(delay) // 60} мин {int(delay) % 60} сек перед ответом...")
     time.sleep(delay)
+
+# Веса активности по часам суток (0–23)
+# Чем выше число — тем охотнее бот отвечает в этот час
+HOUR_WEIGHTS = {
+    0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0,   # ночь — сон (настраивается через sleepStart/End)
+    6: 1, 7: 2, 8: 3,                        # раннее утро — редко
+    9: 5, 10: 6, 11: 6,                      # утро — умеренно
+    12: 4, 13: 5, 14: 5,                     # день — чуть меньше (занят)
+    15: 6, 16: 7, 17: 8,                     # после обеда — активнее
+    18: 9, 19: 10, 20: 10, 21: 9,           # вечер — пик активности
+    22: 6, 23: 3,                            # поздний вечер — спадает
+}
+
+def should_skip_by_hour() -> bool:
+    """Иногда пропускает итерацию в часы низкой активности.
+    
+    В часы с весом 10 — никогда не пропускает.
+    В часы с весом 5 — пропускает ~50% итераций.
+    В часы с весом 1 — пропускает ~90%.
+    В выходные (сб/вс) веса снижены на 40% — автор отдыхает.
+    """
+    hour = datetime.now().hour
+    weight = HOUR_WEIGHTS.get(hour, 5)
+    if weight == 0:
+        return True
+
+    # Выходные — снижаем активность на 40%
+    weekday = datetime.now().weekday()  # 5=сб, 6=вс
+    if weekday >= 5:
+        weight = weight * 0.6
+
+    skip_prob = 1.0 - (weight / 10.0)
+    return random.random() < skip_prob
+
+def is_fresh_comment(published_at: str, max_age_hours: int = 24) -> bool:
+    """Возвращает True если комментарий свежее max_age_hours часов."""
+    try:
+        # YouTube возвращает время в формате ISO 8601: "2026-03-24T10:30:00Z"
+        pub = datetime.fromisoformat(published_at.replace("Z", "+00:00"))
+        age = datetime.now(timezone.utc) - pub
+        return age.total_seconds() < max_age_hours * 3600
+    except Exception:
+        return True  # если не смогли распарсить — не пропускаем
+
+def simulate_human_browsing(yt, video_ids: list[str]):
+    """Имитирует чтение контента без публикации.
+    
+    YouTube видит что аккаунт листает видео/комментарии —
+    это нормальное поведение автора, не только публикация ответов.
+    Вызывается случайно между ответами.
+    """
+    if not video_ids or random.random() > 0.4:
+        return   # 60% времени — не делаем ничего лишнего
+    try:
+        vid = random.choice(video_ids)
+        yt.commentThreads().list(
+            part="snippet",
+            videoId=vid,
+            maxResults=random.randint(5, 20),
+        ).execute()
+        log.info(f"[browse] Просмотрел комментарии видео {vid[:8]}...")
+        time.sleep(random.uniform(2.0, 8.0))   # пауза как будто читает
+    except Exception:
+        pass   # молча игнорируем — это не критично
 
 
 # ── Главный цикл ─────────────────────────────────────────────────
@@ -386,12 +489,22 @@ def run_once():
     max_delay   = anti_ban.get("maxDelay", JITTER_MAX * 60)
     randomize   = anti_ban.get("randomization", True)
 
-    # Системный промпт из дашборда
+    # Параметры персоны из дашборда (слайдеры)
     persona = dash.get("persona", {})
-    system_prompt = persona.get("systemPrompt", SYSTEM_PROMPT) or SYSTEM_PROMPT
+    system_prompt  = persona.get("systemPrompt", SYSTEM_PROMPT) or SYSTEM_PROMPT
+    toxicity       = int(persona.get("toxicityLevel", 65))
+    emoji_freq     = int(persona.get("emojiFrequency", 40))
+    length_bias    = int(persona.get("responseLengthBias", 35))
+    log.info(f"[persona] toxicity={toxicity} emoji={emoji_freq}% length_bias={length_bias}")
 
     if is_sleep_time(sleep_start, sleep_end):
         log.info(f"Режим сна ({sleep_start}:00–{sleep_end}:00). Пропускаю.")
+        return
+
+    # Рандомизация по времени суток — в "тихие" часы иногда пропускаем итерацию
+    if should_skip_by_hour():
+        hour = datetime.now().hour
+        log.info(f"[{hour}:00] Низкая активность по расписанию, пропускаю итерацию.")
         return
 
     state = load_state()
@@ -406,6 +519,7 @@ def run_once():
     videos = get_recent_videos(yt, channel_id, max_results=5)
 
     log.info(f"Проверяю {len(videos)} видео...")
+    video_ids = [v["id"] for v in videos]
 
     pending = []  # (comment, video_title, video_description)
 
@@ -422,6 +536,10 @@ def run_once():
 
             # Пропускаем комментарии от @mc.newsen
             if "mc.newsen" in c["author"].lower():
+                continue
+
+            # Пропускаем старые комментарии (> 24 часов) — отвечаем только на свежие
+            if not is_fresh_comment(c["published_at"], max_age_hours=24):
                 continue
 
             # Проверяем: если последний комментарий в этой ветке от @mc.newsen — пропускаем
@@ -445,7 +563,10 @@ def run_once():
 
         reply_text, usage = generate_reply(
             comment["text"], video_title, state.get("recent_replies", []), video_description,
-            system_prompt=system_prompt
+            system_prompt=system_prompt,
+            toxicity=toxicity,
+            emoji_freq=emoji_freq,
+            length_bias=length_bias,
         )
         if reply_text is None:
             # Если Claude вернул None из-за стоп-листа — пометить, чтобы не трогать снова
@@ -461,6 +582,9 @@ def run_once():
         log.info(f"→ Ответ: {reply_text}")
 
         jitter_sleep(min_delay, max_delay, randomize)
+
+        # Иногда "листает" комментарии перед ответом — имитация живого автора
+        simulate_human_browsing(yt, video_ids)
 
         # Дополнительный случайный delay — имитация "думает перед отправкой"
         think_delay = random.uniform(0.5, 3.0)
