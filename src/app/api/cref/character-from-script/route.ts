@@ -1,0 +1,103 @@
+import { NextRequest, NextResponse } from 'next/server';
+
+const LEONARDO_API = 'https://cloud.leonardo.ai/api/rest/v1';
+
+/**
+ * Extracts the main character from a script and generates their portrait via Leonardo.
+ * Uses a simple heuristic prompt-engineering approach — no external LLM needed.
+ */
+function deriveCharacterPrompt(script: string, style: string): { prompt: string; description: string } {
+  const lines = script
+    .split(/\n+/)
+    .map(l => l.trim())
+    .filter(Boolean);
+
+  // Collect all character-related phrases (who/what appears most in script)
+  const combined = lines.join(' ');
+
+  // Build a portrait prompt from the script context
+  const description = `Main protagonist extracted from this story: "${combined.slice(0, 300)}"`;
+  const prompt = `Character portrait, ${style} style, main protagonist, full body reference sheet, front view, detailed face and costume, ${combined.slice(0, 200)}, masterpiece, best quality, clean background`;
+
+  return { prompt, description };
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const { script, style = 'anime' } = await request.json();
+
+    if (!script?.trim()) {
+      return NextResponse.json({ error: 'script is required' }, { status: 400 });
+    }
+
+    const apiKey = process.env.LEONARDO_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json({ error: 'LEONARDO_API_KEY not configured' }, { status: 500 });
+    }
+
+    const modelMap: Record<string, string> = {
+      anime:     process.env.LEONARDO_MODEL_ANIME   || 'e71a1c2f-4f80-4800-934f-2c68979d8cc8',
+      cyberpunk: process.env.LEONARDO_MODEL_ANIME   || 'e71a1c2f-4f80-4800-934f-2c68979d8cc8',
+      seinen:    process.env.LEONARDO_MODEL_ANIME   || 'e71a1c2f-4f80-4800-934f-2c68979d8cc8',
+      ghibli:    process.env.LEONARDO_MODEL_PHOENIX || 'de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3',
+      mecha:     process.env.LEONARDO_MODEL_ANIME   || 'e71a1c2f-4f80-4800-934f-2c68979d8cc8',
+      realistic: process.env.LEONARDO_MODEL_FLUX    || 'b2614463-296c-462a-9586-aafdb8f00e36',
+    };
+    const modelId = modelMap[style] ?? modelMap.anime;
+
+    const { prompt, description } = deriveCharacterPrompt(script, style);
+
+    const genRes = await fetch(`${LEONARDO_API}/generations`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prompt,
+        negative_prompt: 'blurry, low quality, text, watermark, deformed, extra limbs, multiple characters, crowd, background clutter',
+        modelId,
+        width: 768,
+        height: 1024,
+        num_images: 1,
+        guidance_scale: 8,
+      }),
+    });
+
+    if (!genRes.ok) {
+      const err = await genRes.text();
+      return NextResponse.json({ error: `Leonardo API error: ${err}` }, { status: genRes.status });
+    }
+
+    const genData = await genRes.json();
+    const generationId = genData.sdGenerationJob?.generationId;
+    if (!generationId) {
+      return NextResponse.json({ error: 'No generationId returned' }, { status: 500 });
+    }
+
+    // Poll for completion
+    let imageUrl: string | null = null;
+    for (let i = 0; i < 12; i++) {
+      await new Promise(r => setTimeout(r, 5000));
+      const statusRes = await fetch(`${LEONARDO_API}/generations/${generationId}`, {
+        headers: { 'Authorization': `Bearer ${apiKey}` },
+      });
+      if (!statusRes.ok) continue;
+      const statusData = await statusRes.json();
+      const gen = statusData.generations_by_pk;
+      if (gen?.status === 'COMPLETE' && gen?.generated_images?.length > 0) {
+        imageUrl = gen.generated_images[0].url;
+        break;
+      } else if (gen?.status === 'FAILED') {
+        return NextResponse.json({ error: 'Generation failed' }, { status: 500 });
+      }
+    }
+
+    if (!imageUrl) {
+      return NextResponse.json({ error: 'Generation timed out' }, { status: 504 });
+    }
+
+    return NextResponse.json({ success: true, imageUrl, description, prompt });
+
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}

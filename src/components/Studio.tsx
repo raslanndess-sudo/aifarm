@@ -57,6 +57,7 @@ export default function Studio() {
   const [masterCharLocked, setMasterCharLocked] = useState(false);
   const [masterCharImage, setMasterCharImage] = useState<string | null>(null);
   const [isGeneratingHero, setIsGeneratingHero] = useState(false);
+  const [isGeneratingFromScript, setIsGeneratingFromScript] = useState(false);
   const [isGeneratingAll, setIsGeneratingAll] = useState(false);
   const [aspectRatio, setAspectRatio] = useState<'16:9' | '9:16'>('16:9');
   const [klingModel, setKlingModel] = useState<'kling-v1' | 'kling-v1-5' | 'kling-v2'>('kling-v1');
@@ -340,6 +341,29 @@ export default function Studio() {
     }
   };
 
+  /** Generate master character automatically from the script text */
+  const generateCharacterFromScript = async () => {
+    if (!script.trim()) return;
+    setIsGeneratingFromScript(true);
+    try {
+      const res = await fetch('/api/cref/character-from-script', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ script, style: style.toLowerCase() }),
+      });
+      const data = await res.json();
+      if (data.imageUrl) {
+        setMasterCharImage(data.imageUrl);
+        // Auto-fill description from derived prompt if field is empty
+        if (!masterCharDesc.trim() && data.description) {
+          setMasterCharDesc(data.description);
+        }
+      }
+    } finally {
+      setIsGeneratingFromScript(false);
+    }
+  };
+
   const canGoNext = () => {
     if (step === 1) return script.trim().length > 0;
     if (step === 2) return true; // character is optional
@@ -435,7 +459,18 @@ export default function Studio() {
         {step === 2 && (
           <div className="h-full flex gap-6">
             <div className="flex-1 glass-card p-6 flex flex-col">
-              <h2 className="text-lg font-semibold text-zinc-200 mb-1">Master Character</h2>
+              <div className="flex items-start justify-between mb-1">
+                <h2 className="text-lg font-semibold text-zinc-200">Master Character</h2>
+                <button
+                  onClick={generateCharacterFromScript}
+                  disabled={!script.trim() || masterCharLocked || isGeneratingFromScript}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-purple-500/20 border border-purple-500/30 hover:bg-purple-500/30 text-xs font-medium text-purple-300 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  {isGeneratingFromScript
+                    ? <><RefreshCw className="w-3.5 h-3.5 animate-spin" /> Analysing script…</>
+                    : <><Wand2 className="w-3.5 h-3.5" /> Generate from Script</>}
+                </button>
+              </div>
               <p className="text-xs text-zinc-500 mb-4">Upload 10 reference photos of your character. The AI will fuse them into one unified Master Character image.</p>
 
               {/* Photo upload grid */}
