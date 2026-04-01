@@ -15,11 +15,10 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>('studio');
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex flex-col h-screen overflow-hidden">
       <Sidebar activeTab={activeTab} onTabChange={(t) => setActiveTab(t as Tab)} />
 
       <main className="flex-1 flex flex-col overflow-hidden">
-        <Header activeTab={activeTab} />
         <div className="flex-1 overflow-y-auto p-6">
           {activeTab === 'studio'    && <Studio />}
           {activeTab === 'library'   && <VideoLibrary />}
