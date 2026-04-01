@@ -1,6 +1,6 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
-import { Wand2, Lock, Unlock, ChevronRight, ChevronLeft, Image, RefreshCw, CheckCircle, Film, Layers, User, FileText, Upload, X, Plus, RotateCw } from 'lucide-react';
+import { Wand2, Lock, Unlock, ChevronRight, ChevronLeft, Image, RefreshCw, CheckCircle, Film, Layers, User, FileText, Upload, X, Plus, RotateCw, Download, Scissors } from 'lucide-react';
 
 const STYLES = ['Anime', 'Cyberpunk', 'Realistic', 'Ghibli', 'Seinen', 'Mecha'] as const;
 type Style = typeof STYLES[number];
@@ -30,6 +30,17 @@ function splitIntoScenes(script: string): string[] {
   return lines;
 }
 
+const ASPECT_TEMPLATES: Record<'16:9' | '9:16', { imagePrefix: string; animPrefix: string }> = {
+  '16:9': {
+    imagePrefix: '16:9 widescreen cinematic video frame, ',
+    animPrefix: 'cinematic widescreen 16:9, ',
+  },
+  '9:16': {
+    imagePrefix: '9:16 vertical video frame, portrait orientation, ',
+    animPrefix: 'vertical portrait 9:16, ',
+  },
+};
+
 const STEPS = [
   { id: 1, label: 'Script',      icon: FileText },
   { id: 2, label: 'Character',   icon: User },
@@ -51,6 +62,8 @@ export default function Studio() {
   const [klingModel, setKlingModel] = useState<'kling-v1' | 'kling-v1-5' | 'kling-v2'>('kling-v1');
   const [klingDuration, setKlingDuration] = useState<'5' | '10'>('5');
   const [autoGenerateVideo, setAutoGenerateVideo] = useState(true);
+  const [isMerging, setIsMerging] = useState(false);
+  const [mergedVideoUrl, setMergedVideoUrl] = useState<string | null>(null);
   const [refPhotos, setRefPhotos] = useState<{ file: File; preview: string }[]>([]);
   const [isFusingPhotos, setIsFusingPhotos] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -145,6 +158,70 @@ export default function Studio() {
 
   const updateAnimationPrompt = (id: string, animationPrompt: string) => {
     setScenes(prev => prev.map(s => s.id === id ? { ...s, animationPrompt } : s));
+  };
+
+  /** Switch aspect ratio and inject template prefixes into all scene prompts */
+  const switchAspectRatio = (next: '16:9' | '9:16') => {
+    const prev = aspectRatio;
+    const prevTpl = ASPECT_TEMPLATES[prev];
+    const nextTpl = ASPECT_TEMPLATES[next];
+
+    setAspectRatio(next);
+
+    if (scenes.length === 0) return;
+
+    setScenes(old => old.map(s => {
+      // Strip old prefix if present, then prepend new one
+      const cleanPrompt = s.prompt.startsWith(prevTpl.imagePrefix)
+        ? s.prompt.slice(prevTpl.imagePrefix.length)
+        : s.prompt.startsWith(ASPECT_TEMPLATES['16:9'].imagePrefix)
+          ? s.prompt.slice(ASPECT_TEMPLATES['16:9'].imagePrefix.length)
+          : s.prompt.startsWith(ASPECT_TEMPLATES['9:16'].imagePrefix)
+            ? s.prompt.slice(ASPECT_TEMPLATES['9:16'].imagePrefix.length)
+            : s.prompt;
+
+      const cleanAnim = s.animationPrompt.startsWith(prevTpl.animPrefix)
+        ? s.animationPrompt.slice(prevTpl.animPrefix.length)
+        : s.animationPrompt.startsWith(ASPECT_TEMPLATES['16:9'].animPrefix)
+          ? s.animationPrompt.slice(ASPECT_TEMPLATES['16:9'].animPrefix.length)
+          : s.animationPrompt.startsWith(ASPECT_TEMPLATES['9:16'].animPrefix)
+            ? s.animationPrompt.slice(ASPECT_TEMPLATES['9:16'].animPrefix.length)
+            : s.animationPrompt;
+
+      return {
+        ...s,
+        prompt: nextTpl.imagePrefix + cleanPrompt,
+        animationPrompt: nextTpl.animPrefix + cleanAnim,
+      };
+    }));
+  };
+
+  /** Merge all done videos via ffmpeg on server */
+  const mergeAllVideos = async () => {
+    const videoUrls = scenes
+      .filter(s => s.videoStatus === 'done' && s.videoUrl)
+      .map(s => s.videoUrl!);
+
+    if (videoUrls.length === 0) return;
+    setIsMerging(true);
+    setMergedVideoUrl(null);
+    try {
+      const res = await fetch('/api/kling/merge-video', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ videoUrls }),
+      });
+      const data = await res.json();
+      if (data.videoBase64) {
+        const blob = new Blob(
+          [Uint8Array.from(atob(data.videoBase64), c => c.charCodeAt(0))],
+          { type: 'video/mp4' }
+        );
+        setMergedVideoUrl(URL.createObjectURL(blob));
+      }
+    } finally {
+      setIsMerging(false);
+    }
   };
 
   /** Generate Kling video for a single scene */
@@ -506,7 +583,7 @@ export default function Studio() {
               <div className="flex gap-3 items-center">
                 {/* Aspect ratio toggle */}
                 <button
-                  onClick={() => setAspectRatio(r => r === '16:9' ? '9:16' : '16:9')}
+                  onClick={() => switchAspectRatio(aspectRatio === '16:9' ? '9:16' : '16:9')}
                   className="flex items-center gap-2 px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs text-zinc-400 transition-all"
                 >
                   <RotateCw className="w-3.5 h-3.5" />
@@ -642,8 +719,42 @@ export default function Studio() {
                 >
                   {isGeneratingAll ? <><RefreshCw className="w-4 h-4 animate-spin" /> Generating…</> : <><Wand2 className="w-4 h-4" /> Generate All</>}
                 </button>
+                {/* Merge button — visible when all videos done */}
+                {scenes.length > 0 && scenes.every(s => s.videoStatus === 'done') && (
+                  <button
+                    onClick={mergeAllVideos}
+                    disabled={isMerging}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 text-sm font-medium hover:opacity-90 disabled:opacity-40 transition-all"
+                  >
+                    {isMerging ? <><RefreshCw className="w-4 h-4 animate-spin" /> Merging…</> : <><Scissors className="w-4 h-4" /> Merge Final Video</>}
+                  </button>
+                )}
               </div>
             </div>
+
+            {/* Merged video player */}
+            {mergedVideoUrl && (
+              <div className="mb-4 glass-card p-4 flex items-center gap-4">
+                <video src={mergedVideoUrl} controls className="h-32 rounded-xl" />
+                <div className="flex flex-col gap-2">
+                  <p className="text-sm font-medium text-zinc-200">✅ Final video ready — {scenes.length} scenes merged</p>
+                  <a
+                    href={mergedVideoUrl}
+                    download="final_video.mp4"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 text-sm font-medium hover:opacity-90 transition-all w-fit"
+                  >
+                    <Download className="w-4 h-4" /> Download MP4
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {isMerging && (
+              <div className="mb-3 flex items-center gap-3 px-4 py-3 glass-card rounded-xl">
+                <RefreshCw className="w-4 h-4 text-cyan-400 animate-spin" />
+                <span className="text-sm text-zinc-400">Downloading and merging {scenes.length} clips with ffmpeg…</span>
+              </div>
+            )}
 
             {/* Photo progress */}
             {scenes.length > 0 && (
