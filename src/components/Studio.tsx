@@ -1,268 +1,254 @@
 'use client';
-import { useState, useCallback, useEffect } from 'react';
-import { Wand2, Play, RefreshCw, Download, Send, ChevronRight, Volume2, Lock, Unlock, User, SlidersHorizontal, Sparkles, ToggleLeft, ToggleRight, Shield, ShieldCheck, Camera, Grid3X3, Check, X, RotateCcw, ChevronLeft as ArrowLeft, ChevronRight as ArrowRight, ZoomIn } from 'lucide-react';
-import { styles, voices, demoScenes, sampleScript, demoCharacter, Scene, CharacterRef } from '@/lib/mock-data';
+import { useState } from 'react';
+import { Wand2, Lock, Unlock, ChevronRight, Image, RefreshCw, CheckCircle } from 'lucide-react';
 
-// ============ LIGHTBOX COMPONENT ============
-function Lightbox({
-  images,
-  currentIndex,
-  onClose,
-  onNavigate,
-  labels,
-}: {
-  images: string[];
-  currentIndex: number;
-  onClose: () => void;
-  onNavigate: (index: number) => void;
-  labels?: string[];
-}) {
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Escape') onClose();
-    if (e.key === 'ArrowLeft') onNavigate(Math.max(0, currentIndex - 1));
-    if (e.key === 'ArrowRight') onNavigate(Math.min(images.length - 1, currentIndex + 1));
-  }, [currentIndex, images.length, onClose, onNavigate]);
+const STYLES = ['Anime', 'Cyberpunk', 'Realistic', 'Ghibli', 'Seinen', 'Mecha'] as const;
+type Style = typeof STYLES[number];
 
-  useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
-    };
-  }, [handleKeyDown]);
+interface Scene {
+  id: string;
+  prompt: string;
+  imageUrl: string | null;
+  useMasterChar: boolean;
+  status: 'idle' | 'generating' | 'done';
+}
+
+function splitIntoScenes(script: string): string[] {
+  return script
+    .split(/\n+/)
+    .map(l => l.trim())
+    .filter(Boolean)
+    .slice(0, 8);
+}
+
+export default function Studio() {
+  const [script, setScript] = useState('');
+  const [style, setStyle] = useState<Style>('Anime');
+  const [scenes, setScenes] = useState<Scene[]>([]);
+  const [masterCharDesc, setMasterCharDesc] = useState('');
+  const [masterCharLocked, setMasterCharLocked] = useState(false);
+  const [masterCharImage, setMasterCharImage] = useState<string | null>(null);
+  const [isGeneratingHero, setIsGeneratingHero] = useState(false);
+
+  const parseScenes = () => {
+    const lines = splitIntoScenes(script);
+    if (!lines.length) return;
+    setScenes(lines.map((p, i) => ({
+      id: `scene_${i}`,
+      prompt: p,
+      imageUrl: null,
+      useMasterChar: masterCharLocked,
+      status: 'idle',
+    })));
+  };
+
+  const toggleUseMasterChar = (id: string) => {
+    setScenes(prev => prev.map(s => s.id === id ? { ...s, useMasterChar: !s.useMasterChar } : s));
+  };
+
+  const generateScene = async (scene: Scene) => {
+    setScenes(prev => prev.map(s => s.id === scene.id ? { ...s, status: 'generating' } : s));
+
+    try {
+      const res = await fetch('/api/cref/generate-scene', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          scenePrompt: scene.prompt,
+          style: style.toLowerCase(),
+          ...(scene.useMasterChar && masterCharLocked && masterCharDesc
+            ? { characterDescription: masterCharDesc, characterRefImageUrl: masterCharImage }
+            : {}),
+        }),
+      });
+      const data = await res.json();
+      setScenes(prev => prev.map(s =>
+        s.id === scene.id
+          ? { ...s, imageUrl: data.imageUrl ?? null, status: 'done' }
+          : s
+      ));
+    } catch {
+      setScenes(prev => prev.map(s => s.id === scene.id ? { ...s, status: 'idle' } : s));
+    }
+  };
+
+  const generateHero = async () => {
+    if (!masterCharDesc.trim()) return;
+    setIsGeneratingHero(true);
+    try {
+      const res = await fetch('/api/cref/generate-hero', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ characterDescription: masterCharDesc, style: style.toLowerCase(), name: 'Master Character' }),
+      });
+      const data = await res.json();
+      if (data.imageUrl) setMasterCharImage(data.imageUrl);
+    } finally {
+      setIsGeneratingHero(false);
+    }
+  };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center" onClick={onClose}>
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/90 backdrop-blur-sm" />
-
-      {/* Close button */}
-      <button onClick={onClose} className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
-        <X className="w-6 h-6 text-white" />
-      </button>
-
-      {/* Counter */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-full bg-white/10 backdrop-blur">
-        <span className="text-sm text-white font-mono">{currentIndex + 1} / {images.length}</span>
-      </div>
-
-      {/* Label */}
-      {labels && labels[currentIndex] && (
-        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-lg bg-white/10 backdrop-blur">
-          <span className="text-sm text-white">{labels[currentIndex]}</span>
-        </div>
-      )}
-
-      {/* Navigation arrows */}
-      {currentIndex > 0 && (
-        <button
-          onClick={(e) => { e.stopPropagation(); onNavigate(currentIndex - 1); }}
-          className="absolute left-4 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-        >
-          <ArrowLeft className="w-6 h-6 text-white" />
-        </button>
-      )}
-      {currentIndex < images.length - 1 && (
-        <button
-          onClick={(e) => { e.stopPropagation(); onNavigate(currentIndex + 1); }}
-          className="absolute right-4 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-        >
-          <ArrowRight className="w-6 h-6 text-white" />
-        </button>
-      )}
-
-      {/* Main image */}
-      <div className="relative z-10 max-w-[85vw] max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
-        <img
-          src={images[currentIndex]}
-          alt={labels?.[currentIndex] || `Image ${currentIndex + 1}`}
-          className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+    <div className="space-y-6">
+      {/* Script input */}
+      <div className="glass-card p-6">
+        <h2 className="text-sm font-semibold text-zinc-300 mb-4 flex items-center gap-2">
+          <Wand2 className="w-4 h-4 text-purple-400" />
+          Script / Story
+        </h2>
+        <textarea
+          value={script}
+          onChange={e => setScript(e.target.value)}
+          placeholder="Write your story here. Each line becomes a scene…&#10;&#10;Example:&#10;A young girl wakes up in a mysterious forest&#10;She discovers a glowing portal between ancient trees&#10;A spirit guardian appears to guide her path"
+          className="w-full h-40 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-zinc-300 placeholder-zinc-600 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 resize-none transition-all"
         />
-      </div>
 
-      {/* Thumbnails strip */}
-      {images.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex gap-2 p-2 rounded-xl bg-white/5 backdrop-blur-lg max-w-[80vw] overflow-x-auto" onClick={(e) => e.stopPropagation()}>
-          {images.map((url, idx) => (
+        {/* Style selector */}
+        <div className="flex flex-wrap gap-2 mt-4">
+          {STYLES.map(s => (
             <button
-              key={idx}
-              onClick={() => onNavigate(idx)}
-              className={`flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border-2 transition-all hover:scale-105 ${
-                idx === currentIndex ? 'border-purple-500 shadow-[0_0_10px_rgba(139,92,246,0.5)]' : 'border-transparent opacity-50 hover:opacity-80'
+              key={s}
+              onClick={() => setStyle(s)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                style === s
+                  ? 'bg-gradient-to-r from-purple-600 to-cyan-600 text-white'
+                  : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200'
               }`}
             >
-              <img src={url} alt="" className="w-full h-full object-cover" />
+              {s}
             </button>
           ))}
         </div>
-      )}
+
+        <button
+          onClick={parseScenes}
+          disabled={!script.trim()}
+          className="mt-4 flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-600 text-sm font-medium hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+        >
+          <ChevronRight className="w-4 h-4" />
+          Parse into Scenes
+        </button>
+      </div>
+
+      <div className="grid grid-cols-3 gap-6">
+        {/* Scene cards */}
+        <div className="col-span-2 space-y-4">
+          {scenes.length === 0 ? (
+            <div className="glass-card p-12 flex flex-col items-center justify-center text-center">
+              <Image className="w-12 h-12 text-zinc-700 mb-3" />
+              <p className="text-zinc-600 text-sm">Write a script above and click "Parse into Scenes"</p>
+            </div>
+          ) : (
+            scenes.map((scene, idx) => (
+              <div key={scene.id} className="glass-card p-5 flex gap-4">
+                {/* Thumbnail */}
+                <div className="w-32 h-20 rounded-xl bg-zinc-800 flex items-center justify-center shrink-0 overflow-hidden">
+                  {scene.imageUrl ? (
+                    <img src={scene.imageUrl} alt={`Scene ${idx + 1}`} className="w-full h-full object-cover" />
+                  ) : scene.status === 'generating' ? (
+                    <RefreshCw className="w-6 h-6 text-purple-400 animate-spin" />
+                  ) : (
+                    <Image className="w-6 h-6 text-zinc-600" />
+                  )}
+                </div>
+
+                {/* Info */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs text-zinc-500">Scene {idx + 1}</span>
+                    {scene.status === 'done' && <CheckCircle className="w-3 h-3 text-green-400" />}
+                  </div>
+                  <p className="text-sm text-zinc-300 line-clamp-2">{scene.prompt}</p>
+
+                  <div className="flex items-center gap-3 mt-3">
+                    <label className="flex items-center gap-1.5 text-xs text-zinc-500 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={scene.useMasterChar}
+                        onChange={() => toggleUseMasterChar(scene.id)}
+                        disabled={!masterCharLocked}
+                        className="rounded border-zinc-600 accent-purple-500"
+                      />
+                      Use Master Character
+                    </label>
+                    <button
+                      onClick={() => generateScene(scene)}
+                      disabled={scene.status === 'generating'}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs text-zinc-300 transition-all disabled:opacity-50"
+                    >
+                      {scene.status === 'generating' ? (
+                        <><RefreshCw className="w-3 h-3 animate-spin" /> Generating…</>
+                      ) : (
+                        <><Wand2 className="w-3 h-3" /> Generate</>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Master Character Panel */}
+        <div className="space-y-4">
+          <div className={`glass-card p-5 ${masterCharLocked ? 'border-purple-500/40 shadow-[0_0_30px_rgba(139,92,246,0.1)]' : ''}`}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-zinc-300">Master Character</h3>
+              {masterCharLocked
+                ? <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 border border-purple-500/30 text-purple-400 flex items-center gap-1"><Lock className="w-2.5 h-2.5" /> Locked</span>
+                : <span className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-800 border border-zinc-700 text-zinc-500 flex items-center gap-1"><Unlock className="w-2.5 h-2.5" /> Unlocked</span>
+              }
+            </div>
+
+            {/* Master char image preview */}
+            <div className="w-full aspect-square rounded-xl bg-zinc-800 mb-4 overflow-hidden flex items-center justify-center">
+              {masterCharImage ? (
+                <img src={masterCharImage} alt="Master Character" className="w-full h-full object-cover" />
+              ) : isGeneratingHero ? (
+                <RefreshCw className="w-8 h-8 text-purple-400 animate-spin" />
+              ) : (
+                <div className="text-center">
+                  <Image className="w-8 h-8 text-zinc-600 mx-auto mb-2" />
+                  <p className="text-xs text-zinc-600">No hero yet</p>
+                </div>
+              )}
+            </div>
+
+            <textarea
+              value={masterCharDesc}
+              onChange={e => setMasterCharDesc(e.target.value)}
+              disabled={masterCharLocked}
+              placeholder="Describe your character…&#10;e.g. Young girl with silver hair, blue eyes, wearing a traditional shrine maiden outfit"
+              className="w-full h-24 bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-zinc-300 placeholder-zinc-600 focus:outline-none focus:border-purple-500/50 resize-none transition-all disabled:opacity-50"
+            />
+
+            <div className="flex flex-col gap-2 mt-3">
+              <button
+                onClick={generateHero}
+                disabled={!masterCharDesc.trim() || masterCharLocked || isGeneratingHero}
+                className="w-full py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-300 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
+              >
+                {isGeneratingHero ? <><RefreshCw className="w-3 h-3 animate-spin" /> Generating…</> : <><Wand2 className="w-3 h-3" /> Generate Hero</>}
+              </button>
+
+              <button
+                onClick={() => setMasterCharLocked(l => !l)}
+                disabled={!masterCharImage}
+                className={`w-full py-2 rounded-xl text-xs font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 ${
+                  masterCharLocked
+                    ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-400'
+                    : 'bg-gradient-to-r from-purple-600 to-cyan-600 hover:opacity-90 text-white'
+                }`}
+              >
+                {masterCharLocked
+                  ? <><Unlock className="w-3 h-3" /> Unlock Character</>
+                  : <><Lock className="w-3 h-3" /> Lock Character</>
+                }
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
-
-// ============ ANGLE DEFINITIONS ============
-const ANGLES = [
-  { id: 0, label: 'Front', prompt: 'single character, front-facing portrait, looking straight at camera, head and shoulders, centered composition' },
-  { id: 1, label: '¾ Left', prompt: 'single character, three-quarter view turned to the left, face angled 45 degrees left, head and shoulders portrait' },
-  { id: 2, label: '¾ Right', prompt: 'single character, three-quarter view turned to the right, face angled 45 degrees right, head and shoulders portrait' },
-  { id: 3, label: 'Left Profile', prompt: 'single character, full side profile view from the left, only left side of face visible, ear visible, looking left' },
-  { id: 4, label: 'Right Profile', prompt: 'single character, full side profile view from the right, only right side of face visible, ear visible, looking right' },
-  { id: 5, label: 'Low Angle', prompt: 'single character, dramatic low angle camera looking up at character from below, chin and jaw prominent, heroic pose' },
-  { id: 6, label: 'High Angle', prompt: 'single character, high angle camera looking down at character from above, top of head visible, looking upward' },
-  { id: 7, label: 'Back View', prompt: 'single character seen from behind, back of head and shoulders, showing hair and back of outfit, facing away from camera' },
-  { id: 8, label: 'Action Pose', prompt: 'single character in dynamic action pose, mid-fight stance, body twisted, full body visible, dramatic angle' },
-  { id: 9, label: 'Close-up', prompt: 'single character extreme close-up of face only, filling the frame, sharp focus on eyes and expression, cinematic macro shot' },
-];
-
-type CharacterStage = 'concept' | 'refsheet' | 'locked';
-
-interface AngleImage {
-  angle: string;
-  imageUrl: string | null;
-  status: 'pending' | 'generating' | 'done' | 'error';
-}
-
-// ============ MASTER CHARACTER PANEL ============
-function MasterCharacterPanel({
-  character,
-  stage,
-  concepts,
-  selectedConcept,
-  angleImages,
-  anglesGenerating,
-  anglesProgress,
-  onUpdateCharacter,
-  onGenerateConcept,
-  onSelectConcept,
-  onGenerateAngles,
-  onLock,
-  onReset,
-}: {
-  character: CharacterRef;
-  stage: CharacterStage;
-  concepts: string[];
-  selectedConcept: number;
-  angleImages: AngleImage[];
-  anglesGenerating: boolean;
-  anglesProgress: number;
-  onUpdateCharacter: (updates: Partial<CharacterRef>) => void;
-  onGenerateConcept: () => void;
-  onSelectConcept: (idx: number) => void;
-  onGenerateAngles: () => void;
-  onLock: () => void;
-  onReset: () => void;
-}) {
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [lightboxIndex, setLightboxIndex] = useState(0);
-  const [lightboxImages, setLightboxImages] = useState<string[]>([]);
-  const [lightboxLabels, setLightboxLabels] = useState<string[]>([]);
-
-  const openConceptLightbox = (idx: number) => {
-    setLightboxImages(concepts);
-    setLightboxLabels(concepts.map((_, i) => `Concept ${i + 1}`));
-    setLightboxIndex(idx);
-    setLightboxOpen(true);
-  };
-
-  const openAngleLightbox = (idx: number) => {
-    const available = angleImages.filter(a => a.imageUrl).map((a, i) => ({ url: a.imageUrl!, label: ANGLES[angleImages.indexOf(a)]?.label || `Angle ${i + 1}` }));
-    if (available.length === 0) return;
-    const realIdx = available.findIndex(a => a.url === angleImages[idx]?.imageUrl);
-    setLightboxImages(available.map(a => a.url));
-    setLightboxLabels(available.map(a => a.label));
-    setLightboxIndex(realIdx >= 0 ? realIdx : 0);
-    setLightboxOpen(true);
-  };
-
-  return (
-    <>
-    {lightboxOpen && (
-      <Lightbox
-        images={lightboxImages}
-        currentIndex={lightboxIndex}
-        onClose={() => setLightboxOpen(false)}
-        onNavigate={(i) => setLightboxIndex(i)}
-        labels={lightboxLabels}
-      />
-    )}
-    <div className={`glass-card p-4 mb-4 transition-all ${
-      stage === 'locked' ? 'border-green-500/30 shadow-[0_0_20px_rgba(34,197,94,0.1)]' :
-      stage === 'refsheet' ? 'border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.1)]' :
-      'border-purple-500/20'
-    }`}>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          {stage === 'locked' ? <ShieldCheck className="w-4 h-4 text-green-400" /> :
-           stage === 'refsheet' ? <Grid3X3 className="w-4 h-4 text-cyan-400" /> :
-           <User className="w-4 h-4 text-purple-400" />}
-          <h4 className="text-xs font-semibold text-zinc-300">
-            {stage === 'concept' ? 'Step 1: Find Your Character' :
-             stage === 'refsheet' ? 'Step 2: Reference Sheet (10 Angles)' :
-             'Master Character — LOCKED'}
-          </h4>
-        </div>
-        {stage !== 'concept' && (
-          <button onClick={onReset} className="text-[10px] text-zinc-600 hover:text-zinc-400 flex items-center gap-1">
-            <RotateCcw className="w-3 h-3" /> Reset
-          </button>
-        )}
-      </div>
-
-      {/* Stage Dots */}
-      <div className="flex items-center gap-2 mb-3">
-        {['concept', 'refsheet', 'locked'].map((s, i) => (
-          <div key={s} className="flex items-center gap-1.5">
-            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border transition-all ${
-              s === stage ? 'bg-purple-500/20 border-purple-500 text-purple-400' :
-              ['concept', 'refsheet', 'locked'].indexOf(stage) > i ? 'bg-green-500/20 border-green-500/50 text-green-400' :
-              'border-zinc-700 text-zinc-600'
-            }`}>{i + 1}</div>
-            {i < 2 && <div className={`w-8 h-0.5 ${['concept', 'refsheet', 'locked'].indexOf(stage) > i ? 'bg-green-500/30' : 'bg-zinc-800'}`} />}
-          </div>
-        ))}
-      </div>
-
-      {/* ========== STAGE 1: CONCEPT ========== */}
-      {stage === 'concept' && (
-        <>
-          <input
-            type="text"
-            value={character.name}
-            onChange={(e) => onUpdateCharacter({ name: e.target.value })}
-            className="w-full mb-2 px-3 py-2 bg-black/30 border border-white/[0.06] rounded-lg text-sm text-zinc-200 focus:outline-none focus:border-purple-500/50 placeholder-zinc-600"
-            placeholder="Character name..."
-          />
-          <textarea
-            value={character.description}
-            onChange={(e) => onUpdateCharacter({ description: e.target.value })}
-            className="w-full h-20 mb-3 px-3 py-2 bg-black/30 border border-white/[0.06] rounded-lg text-[11px] text-zinc-400 resize-none focus:outline-none focus:border-purple-500/50 placeholder-zinc-600"
-            placeholder="Describe face, hair, clothing, distinguishing features..."
-          />
-
-          {/* Concept Gallery */}
-          {concepts.length > 0 && (
-            <div className="mb-3">
-              <div className="text-[10px] text-zinc-500 mb-2">Generated concepts (click to select, double-click to zoom):</div>
-              <div className="grid grid-cols-3 gap-2">
-                {concepts.map((url, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => onSelectConcept(idx)}
-                    onDoubleClick={(e) => { e.stopPropagation(); openConceptLightbox(idx); }}
-                    className={`aspect-square rounded-lg overflow-hidden border-2 transition-all hover:scale-[1.03] relative group ${
-                      selectedConcept === idx ? 'border-purple-500 shadow-[0_0_12px_rgba(139,92,246,0.4)]' : 'border-transparent hover:border-white/20'
-                    }`}
-                  >
-                    <img src={url} alt={`Concept ${idx + 1}`} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
-                      <ZoomIn className="w-4 h-4 text-white" />
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Concept Preview (selected                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
