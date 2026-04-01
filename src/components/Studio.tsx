@@ -23,11 +23,46 @@ function splitIntoScenes(script: string): string[] {
     .map(l => l.trim())
     .filter(Boolean)
     .slice(0, 10);
-  // Ensure minimum 6 scenes — pad with empty prompts
   while (lines.length < 6) {
     lines.push(`Scene ${lines.length + 1} — describe this scene…`);
   }
   return lines;
+}
+
+/** Derive a cinematic animation prompt from a scene description using keyword heuristics */
+function deriveAnimationPrompt(sceneLine: string, aspectRatio: '16:9' | '9:16'): string {
+  const t = sceneLine.toLowerCase();
+
+  const ratioPrefix = aspectRatio === '16:9'
+    ? 'cinematic widescreen 16:9, '
+    : 'vertical portrait 9:16, ';
+
+  // Action / combat
+  if (/leap|jump|dash|clash|fight|strike|slash|attack|explod|spark|burst|impact/.test(t)) {
+    return ratioPrefix + 'fast dynamic camera track, motion blur, slow-motion impact, cinematic';
+  }
+  // Landing / aftermath
+  if (/land|turn back|dissolv|vanish|disappear|fade|shadow/.test(t)) {
+    return ratioPrefix + 'slow push in, camera lowers, dramatic pause, cinematic';
+  }
+  // Emotional / internal moment
+  if (/clos(e|es|ing) (eye|eyes)|grip|breath|tremble|tears|silence|alone|stand/.test(t)) {
+    return ratioPrefix + 'slow zoom in, gentle camera drift, shallow depth of field, cinematic';
+  }
+  // Aerial / wide environment
+  if (/rooftop|city|sky|horizon|landscape|overview|vast|crowd|sunset|sunrise/.test(t)) {
+    return ratioPrefix + 'wide aerial shot, slow dolly forward, epic establishing shot, cinematic';
+  }
+  // Mid-air / flight
+  if (/mid.air|fly|soar|across|gap|bridge/.test(t)) {
+    return ratioPrefix + 'tracking shot from below, upward tilt, dynamic follow cam, cinematic';
+  }
+  // Appearance / reveal
+  if (/appear|emerge|arriv|reveal|step out|figure|eyes glow/.test(t)) {
+    return ratioPrefix + 'slow push in, dramatic reveal, camera rises, cinematic';
+  }
+  // Default — gentle drift
+  return ratioPrefix + 'slow gentle camera drift, subtle zoom, cinematic depth of field';
 }
 
 const ASPECT_TEMPLATES: Record<'16:9' | '9:16', { imagePrefix: string; animPrefix: string }> = {
@@ -138,7 +173,7 @@ export default function Studio() {
     setScenes(lines.map((p, i) => ({
       id: `scene_${i}`,
       prompt: p,
-      animationPrompt: '',
+      animationPrompt: deriveAnimationPrompt(p, aspectRatio),
       imageUrl: null,
       videoUrl: null,
       videoTaskId: null,
@@ -189,10 +224,16 @@ export default function Studio() {
             ? s.animationPrompt.slice(ASPECT_TEMPLATES['9:16'].animPrefix.length)
             : s.animationPrompt;
 
+      // Re-derive animation prompt with new ratio (preserves manual edits by checking if it still matches a generated pattern)
+      const isAutoAnim = s.animationPrompt.startsWith(prevTpl.animPrefix) || s.animationPrompt.startsWith(ASPECT_TEMPLATES['16:9'].animPrefix) || s.animationPrompt.startsWith(ASPECT_TEMPLATES['9:16'].animPrefix);
+      const newAnimPrompt = isAutoAnim
+        ? deriveAnimationPrompt(cleanPrompt, next)
+        : s.animationPrompt;
+
       return {
         ...s,
         prompt: nextTpl.imagePrefix + cleanPrompt,
-        animationPrompt: nextTpl.animPrefix + cleanAnim,
+        animationPrompt: newAnimPrompt,
       };
     }));
   };
