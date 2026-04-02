@@ -37,32 +37,34 @@ function deriveAnimationPrompt(sceneLine: string, aspectRatio: '16:9' | '9:16'):
     ? 'cinematic widescreen 16:9, '
     : 'vertical portrait 9:16, ';
 
+  const animeBase = 'anime style, hand-drawn 2D animation, vibrant colors, sharp lineart, fluid motion';
+
   // Action / combat
   if (/leap|jump|dash|clash|fight|strike|slash|attack|explod|spark|burst|impact/.test(t)) {
-    return ratioPrefix + 'fast dynamic camera track, motion blur, slow-motion impact, cinematic';
+    return ratioPrefix + `${animeBase}, dynamic action sequence, speed lines, sakuga animation, fast camera whip pan, slow-motion impact frame, motion blur streaks, dramatic sword flash`;
   }
   // Landing / aftermath
   if (/land|turn back|dissolv|vanish|disappear|fade|shadow/.test(t)) {
-    return ratioPrefix + 'slow push in, camera lowers, dramatic pause, cinematic';
+    return ratioPrefix + `${animeBase}, camera slowly lowers, dust particles settling, hair and coat settle with gravity, dramatic still frame pause, subtle wind effect`;
   }
   // Emotional / internal moment
   if (/clos(e|es|ing) (eye|eyes)|grip|breath|tremble|tears|silence|alone|stand/.test(t)) {
-    return ratioPrefix + 'slow zoom in, gentle camera drift, shallow depth of field, cinematic';
+    return ratioPrefix + `${animeBase}, slow emotional zoom in, cherry blossom petals drifting, soft rim lighting on face, eye catch sparkle, gentle cloth and hair sway`;
   }
   // Aerial / wide environment
   if (/rooftop|city|sky|horizon|landscape|overview|vast|crowd|sunset|sunrise/.test(t)) {
-    return ratioPrefix + 'wide aerial shot, slow dolly forward, epic establishing shot, cinematic';
+    return ratioPrefix + `${animeBase}, epic wide establishing shot, slow aerial dolly forward, golden hour lighting, atmospheric haze, skyline silhouette, dramatic scale`;
   }
   // Mid-air / flight
   if (/mid.air|fly|soar|across|gap|bridge/.test(t)) {
-    return ratioPrefix + 'tracking shot from below, upward tilt, dynamic follow cam, cinematic';
+    return ratioPrefix + `${animeBase}, upward tracking shot, dynamic follow cam, wind rushing effect, clothes and hair trailing, speed lines radiating outward`;
   }
   // Appearance / reveal
   if (/appear|emerge|arriv|reveal|step out|figure|eyes glow/.test(t)) {
-    return ratioPrefix + 'slow push in, dramatic reveal, camera rises, cinematic';
+    return ratioPrefix + `${animeBase}, dramatic slow push in, camera rises to reveal, glowing eyes close-up, shadow dissolves into light, tension build-up`;
   }
-  // Default — gentle drift
-  return ratioPrefix + 'slow gentle camera drift, subtle zoom, cinematic depth of field';
+  // Default — gentle scene
+  return ratioPrefix + `${animeBase}, gentle camera drift, soft parallax background, floating dust particles, ambient wind, calm atmospheric motion`;
 }
 
 const ASPECT_TEMPLATES: Record<'16:9' | '9:16', { imagePrefix: string; animPrefix: string }> = {
