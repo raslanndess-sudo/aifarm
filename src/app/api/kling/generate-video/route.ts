@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { submitKlingImageToVideo, pollKlingTask } from '@/lib/kling';
+import { submitKlingImageToVideo } from '@/lib/kling';
 
 export const maxDuration = 300; // 5 min for Vercel
 
@@ -12,7 +12,6 @@ export async function POST(request: NextRequest) {
       modelName = 'kling-v1',
       duration = '5',
       mode = 'std',
-      waitForResult = true,
     } = body;
 
     if (!imageUrl) {
@@ -23,38 +22,28 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Kling API keys not configured' }, { status: 500 });
     }
 
-    // Submit task
+    // Download image → base64 (Kling cannot access Leonardo CDN URLs directly)
+    let imageBase64: string;
+    if (imageUrl.startsWith('http')) {
+      const imgRes = await fetch(imageUrl);
+      if (!imgRes.ok) throw new Error(`Failed to download scene image: ${imgRes.status}`);
+      const buf = await imgRes.arrayBuffer();
+      imageBase64 = `data:image/jpeg;base64,${Buffer.from(buf).toString('base64')}`;
+    } else {
+      // already base64
+      imageBase64 = imageUrl;
+    }
+
+    // Submit task — returns task_id immediately
     const taskId = await submitKlingImageToVideo({
-      imageUrl,
+      imageUrl: imageBase64,
       animationPrompt,
       modelName,
       duration,
       mode,
     });
 
-    if (!waitForResult) {
-      // Return task_id immediately — client can poll /api/kling/task-status
-      return NextResponse.json({ success: true, taskId, status: 'submitted' });
-    }
-
-    // Wait for result (up to 5 min)
-    const videoUrl = await pollKlingTask(taskId, 280_000);
-
-    if (!videoUrl) {
-      return NextResponse.json({
-        success: false,
-        taskId,
-        status: 'timeout',
-        error: 'Video generation timed out (>5 min)',
-      }, { status: 504 });
-    }
-
-    return NextResponse.json({
-      success: true,
-      taskId,
-      status: 'done',
-      videoUrl,
-    });
+    return NextResponse.json({ success: true, taskId, status: 'submitted' });
 
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';

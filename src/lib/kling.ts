@@ -84,14 +84,20 @@ export async function submitKlingImageToVideo(params: {
     mode = 'std',
   } = params;
 
-  const body = {
+  // Kling accepts either a URL or base64 data URI
+  const isBase64 = imageUrl.startsWith('data:');
+  const body: Record<string, unknown> = {
     model_name: modelName,
     mode,
     duration,
-    image: imageUrl,
     prompt: animationPrompt,
     cfg_scale: 0.5,
   };
+  if (isBase64) {
+    body.image = imageUrl; // data:image/jpeg;base64,...
+  } else {
+    body.image = imageUrl;
+  }
 
   const res = await klingFetch('/videos/image2video', {
     method: 'POST',

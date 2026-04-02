@@ -11,6 +11,7 @@ export async function POST(request: NextRequest) {
       characterRefImageUrl,
       characterDescription,
       characterName,
+      aspectRatio = '16:9',
     } = body;
 
     const apiKey = process.env.LEONARDO_API_KEY;
@@ -32,14 +33,14 @@ export async function POST(request: NextRequest) {
     };
     const modelId = modelMap[style] || modelMap.anime;
 
-    // Build prompt, optionally injecting character reference
+    // Build prompt — inject character description for consistency
     const charPrefix = characterDescription
       ? `${characterName ? characterName + ', ' : ''}${characterDescription}. `
       : '';
     const fullPrompt = `${charPrefix}${scenePrompt}. Style: ${style} anime, cinematic scene, masterpiece, best quality, highly detailed`;
 
-    // If we have a character ref image, upload it as init image for consistency
-    let initImageId: string | null = null;
+    // Upload character ref image for ControlNet (IP-Adapter character consistency)
+    let controlnetImageId: string | null = null;
     if (characterRefImageUrl) {
       const uploadRes = await fetch(`${LEONARDO_API}/init-image`, {
         method: 'POST',
@@ -48,23 +49,34 @@ export async function POST(request: NextRequest) {
       });
       if (uploadRes.ok) {
         const uploadData = await uploadRes.json();
-        initImageId = uploadData?.uploadInitImage?.id ?? null;
+        controlnetImageId = uploadData?.uploadInitImage?.id ?? null;
       }
     }
 
+    // Dimensions by aspect ratio
+    const dimensions = aspectRatio === '9:16'
+      ? { width: 768, height: 1344 }
+      : { width: 1344, height: 768 };
+
     const genBody: Record<string, unknown> = {
       prompt: fullPrompt,
-      negative_prompt: 'blurry, low quality, text, watermark, deformed, extra limbs, low resolution',
+      negative_prompt: 'blurry, low quality, text, watermark, deformed, extra limbs, low resolution, inconsistent character, different outfit',
       modelId,
-      width: 1344,
-      height: 768,
+      ...dimensions,
       num_images: 1,
-      guidance_scale: 7,
+      guidance_scale: 8,
     };
 
-    if (initImageId) {
-      genBody.init_image_id = initImageId;
-      genBody.init_strength = 0.30;
+    // ControlNet for character reference — keeps face/costume consistent across scenes
+    if (controlnetImageId) {
+      genBody.controlnets = [
+        {
+          preprocessorId: 67, // IP-Adapter / Character Reference in Leonardo
+          initImageId: controlnetImageId,
+          strengthType: 'High',
+          influence: 0.75,
+        },
+      ];
     }
 
     const genRes = await fetch(`${LEONARDO_API}/generations`, {

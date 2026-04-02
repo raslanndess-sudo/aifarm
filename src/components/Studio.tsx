@@ -330,15 +330,19 @@ export default function Studio() {
   const generateScene = async (scene: Scene) => {
     setScenes(prev => prev.map(s => s.id === scene.id ? { ...s, status: 'generating' } : s));
     try {
+      // Always pass character ref if master char is locked — for consistency across all scenes
+      const useChar = masterCharLocked && masterCharImage;
       const res = await fetch('/api/cref/generate-scene', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           scenePrompt: scene.prompt,
           style: style.toLowerCase(),
-          ...(scene.useMasterChar && masterCharLocked && masterCharDesc
-            ? { characterDescription: masterCharDesc, characterRefImageUrl: masterCharImage }
-            : {}),
+          aspectRatio,
+          ...(useChar ? {
+            characterDescription: masterCharDesc,
+            characterRefImageUrl: masterCharImage,
+          } : {}),
         }),
       });
       const data = await res.json();
@@ -349,9 +353,12 @@ export default function Studio() {
 
       // Auto-generate Kling video if enabled
       if (autoGenerateVideo && imageUrl) {
-        // Get latest scene state (with animationPrompt)
-        const updatedScene = { ...scene, imageUrl };
-        generateKlingVideo(updatedScene);
+        // Pull fresh animationPrompt from state
+        setScenes(prev => {
+          const fresh = prev.find(s => s.id === scene.id);
+          if (fresh) generateKlingVideo({ ...fresh, imageUrl });
+          return prev;
+        });
       }
     } catch {
       setScenes(prev => prev.map(s => s.id === scene.id ? { ...s, status: 'idle' } : s));
