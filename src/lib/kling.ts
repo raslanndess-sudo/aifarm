@@ -104,15 +104,27 @@ export async function submitKlingImageToVideo(params: {
     body: JSON.stringify(body),
   });
 
+  const rawText = await res.text();
+  console.log('[Kling] image2video response:', res.status, rawText.slice(0, 500));
+
   if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Kling API error: ${err}`);
+    throw new Error(`Kling API ${res.status}: ${rawText}`);
   }
 
-  const data = await res.json();
-  // Response: { code, message, request_id, data: { task_id, task_status, ... } }
-  const taskId: string = data?.data?.task_id;
-  if (!taskId) throw new Error('No task_id returned from Kling');
+  let data: Record<string, unknown>;
+  try {
+    data = JSON.parse(rawText);
+  } catch {
+    throw new Error(`Kling non-JSON response: ${rawText.slice(0, 200)}`);
+  }
+
+  // Kling error codes: code 0 = success
+  if (data.code !== 0) {
+    throw new Error(`Kling error code ${data.code}: ${data.message}`);
+  }
+
+  const taskId: string = (data?.data as Record<string, unknown>)?.task_id as string;
+  if (!taskId) throw new Error(`No task_id in Kling response: ${rawText.slice(0, 200)}`);
   return taskId;
 }
 
