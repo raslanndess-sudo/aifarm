@@ -71,6 +71,7 @@ export interface KlingVideoTask {
  */
 export async function submitKlingImageToVideo(params: {
   imageUrl: string;
+  tailImage?: string;
   animationPrompt?: string;
   modelName?: string;
   duration?: '5' | '10';
@@ -78,6 +79,7 @@ export async function submitKlingImageToVideo(params: {
 }): Promise<string> {
   const {
     imageUrl,
+    tailImage,
     animationPrompt = '',
     modelName = 'kling-v1',
     duration = '5',
@@ -97,6 +99,9 @@ export async function submitKlingImageToVideo(params: {
     body.image = imageUrl; // data:image/jpeg;base64,...
   } else {
     body.image = imageUrl;
+  }
+  if (tailImage) {
+    body.tail_image = tailImage;
   }
 
   const res = await klingFetch('/videos/image2video', {

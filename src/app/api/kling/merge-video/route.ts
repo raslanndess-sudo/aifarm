@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import fs from 'fs/promises';
+import { mkdirSync, copyFileSync } from 'fs';
 import path from 'path';
 import os from 'os';
 
@@ -41,6 +42,14 @@ export async function POST(request: NextRequest) {
       { timeout: 120_000 }
     );
 
+    // Copy to public/generations before cleanup
+    const jobId = `merge_${Date.now()}`;
+    const publicDir = path.join(process.cwd(), 'public', 'generations', jobId);
+    mkdirSync(publicDir, { recursive: true });
+    const finalPublicPath = path.join(publicDir, 'final.mp4');
+    copyFileSync(outPath, finalPublicPath);
+    const publicUrl = `/generations/${jobId}/final.mp4`;
+
     // Read result and return as base64
     const merged = await fs.readFile(outPath);
     const base64 = merged.toString('base64');
@@ -48,6 +57,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       videoBase64: base64,
+      videoUrl: publicUrl,
       mimeType: 'video/mp4',
       sceneCount: videoUrls.length,
     });

@@ -1,0 +1,122 @@
+{
+  "project": "decentralized-freelance-cis",
+  "version": "1.0",
+  "scenes": [
+    {
+      "name": "hero_main",
+      "type": "hero",
+      "aspect_ratio": "16:9",
+      "count": 8,
+      "image_prompt": "Cinematic wide shot of a young Central Asian freelancer in her late 20s working from a minimalist sunlit apartment in Almaty, sitting at a solid oak desk with a modern aluminum laptop, shallow depth of field, soft window light from the left, faint holographic network lines floating subtly in the blurred background suggesting decentralized connection, deep navy and warm off-white color grading, electric cyan accent on screen glow, matte film texture, editorial photography, Kodak Portra feel, no text, no logos",
+      "video_prompt": "Slow 8-second cinematic push-in toward the laptop screen, soft dust particles floating in sunlight, subtle holographic network lines pulsing once in the background, her hand lifts slightly as she types, no cuts, no transitions, locked camera on a tripod with a gentle dolly-in, shallow focus shifting from her face to the screen"
+    },
+    {
+      "name": "hero_alt_collab",
+      "type": "hero",
+      "aspect_ratio": "16:9",
+      "count": 8,
+      "image_prompt": "Overhead top-down shot of a wooden desk with two laptops facing each other, one with a modern freelance platform interface visible as abstract shapes, warm ceramic coffee mug, leather notebook, a hand of a Slavic man and a hand of a Central Asian woman both typing, implying distributed collaboration, warm side light, navy and off-white palette, subtle lime green accent on one screen, photorealistic, editorial, no visible text or logos",
+      "video_prompt": "Gentle parallax camera movement from left to right across the desk, hands continue typing naturally, coffee steam rises slowly, 8 seconds, no cuts, locked top-down frame with subtle drift"
+    },
+    {
+      "name": "feature_dev",
+      "type": "feature",
+      "aspect_ratio": "3:2",
+      "count": 8,
+      "image_prompt": "Medium shot of a male developer in his early 30s with a mixed Slavic-Caucasian appearance, focused expression, working at night on a clean matte black desk with two monitors showing abstract code in navy and cyan, warm desk lamp on the right, bookshelf blurred in background, realistic skin texture, matte film look, deep contrast, editorial tech photography, no brand logos, no visible text on screens",
+      "video_prompt": "Subtle camera push-in from his shoulder toward the monitors, his eyes flicker across the screen, one slow blink, 8 seconds, cinematic, no cuts, ambient room tone"
+    },
+    {
+      "name": "feature_design",
+      "type": "feature",
+      "aspect_ratio": "3:2",
+      "count": 8,
+      "image_prompt": "Female graphic designer in her late 20s with Central Asian features, working on a large color-calibrated display showing abstract geometric branding artwork in navy, off-white, and lime, holding a stylus, minimalist bright studio with concrete wall and one green plant, soft north-facing daylight, warm skin tone, editorial, photorealistic, no visible text or client logos",
+      "video_prompt": "Slow dolly-in toward her hand moving the stylus across the tablet, the abstract shapes on her screen shift slightly, 8 seconds, natural breathing micro-movements, locked cinematic frame"
+    },
+    {
+      "name": "feature_video_editor",
+      "type": "feature",
+      "aspect_ratio": "3:2",
+      "count": 8,
+      "image_prompt": "Video editor in his 30s, Caucasian features, dark room lit only by three monitors showing abstract timeline and color wheel panels in cyan and amber, wearing dark hoodie, warm side rim light from a salt lamp on the right, concentrated expression, matte photorealistic, editorial cinematography lighting, no logos, no readable text",
+      "video_prompt": "Colors on the monitors shift subtly as if he is color-grading, his hand moves a small device, reflection of the screen dances on his glasses, 8 seconds locked shot, no cuts"
+    },
+    {
+      "name": "feature_copywriter",
+      "type": "feature",
+      "aspect_ratio": "3:2",
+      "count": 8,
+      "image_prompt": "Female copywriter in her 30s, Slavic features, sitting in a bright Scandinavian-style cafe in a CIS city, writing on a lightweight laptop, cappuccino and a worn leather notebook beside her, large window with soft diffused daylight, warm off-white and navy palette, wool coat on the chair, realistic editorial photography, no visible brand marks",
+      "video_prompt": "Gentle handheld-feel camera with very slight sway, she looks up from her laptop toward the window, soft steam rises from the cup, 8 seconds, shallow depth of field, natural ambient cafe atmosphere"
+    },
+    {
+      "name": "trust_escrow",
+      "type": "feature",
+      "aspect_ratio": "3:2",
+      "count": 8,
+      "image_prompt": "Abstract conceptual visual of two hands from opposite sides meeting at a glowing geometric node, navy background with soft volumetric light, the node is a faceted crystal-like shape in electric cyan suggesting a smart contract or escrow, thin lines of light connecting to other nodes in the background, photorealistic studio render feel, subtle particles, editorial tech aesthetic, no text, no crypto logos",
+      "video_prompt": "The central node pulses softly with light twice over 8 seconds, thin lines along the connections animate with a slow flowing glow from one hand to the other, camera very slowly rotates 5 degrees, locked cinematic feel"
+    },
+    {
+      "name": "testimonial_freelancer_1",
+      "type": "testimonial",
+      "aspect_ratio": "1:1",
+      "count": 8,
+      "image_prompt": "Portrait of a young Central Asian woman in her late 20s, warm genuine half-smile, looking slightly off-camera, wearing a simple cream knit sweater, soft window light from the side, clean neutral off-white wall background with subtle texture, realistic skin, natural makeup, editorial portrait photography, shot on 85mm, no heavy retouching",
+      "video_prompt": "She looks from off-camera back to the lens and gives a small natural smile, 8 seconds, breathing naturally, one slow blink, locked portrait frame, soft light breathing slightly"
+    },
+    {
+      "name": "testimonial_client_1",
+      "type": "testimonial",
+      "aspect_ratio": "1:1",
+      "count": 8,
+      "image_prompt": "Portrait of a Slavic man in his mid 40s, short beard with a bit of grey, calm confident expression, wearing a simple navy sweater, soft diffused daylight, warm off-white background, realistic skin texture with natural lines, editorial portrait, 85mm depth of field, no logos, no over-retouching",
+      "video_prompt": "He gives a slow, confident nod and a subtle closed-mouth smile, 8 seconds, natural micro-movements, locked portrait frame"
+    },
+    {
+      "name": "community_group",
+      "type": "feature",
+      "aspect_ratio": "3:2",
+      "count": 8,
+      "image_prompt": "Wide shot of a diverse group of four CIS freelancers — one Central Asian woman, one Slavic man, one Caucasian woman, one mixed-heritage man — around a modern communal workspace table, laptops open, genuine conversation and eye contact, matte daylight from large windows, navy and off-white palette with warm wood, realistic editorial photography, no branded clothing, no visible logos",
+      "video_prompt": "Natural conversation gestures, one person laughs softly, another nods, camera very slow push-in over 8 seconds, locked cinematic, no cuts"
+    },
+    {
+      "name": "promo_reels_hook",
+      "type": "promo_reels",
+      "aspect_ratio": "9:16",
+      "count": 8,
+      "image_prompt": "Vertical cinematic close-up of a young Central Asian freelancer's hands typing on a sleek laptop, glowing faint network lines emerging from the keyboard upward into soft darkness, deep navy background, electric cyan accent on the glow, matte film texture, photorealistic, moody lighting, editorial tech aesthetic, no text, no logos",
+      "video_prompt": "The glowing lines rise upward from the keyboard and split into multiple paths, 8 seconds, her hands keep typing rhythmically, slow zoom-out from hands to reveal the laptop screen, cinematic vertical framing"
+    },
+    {
+      "name": "promo_reels_payout",
+      "type": "promo_reels",
+      "aspect_ratio": "9:16",
+      "count": 8,
+      "image_prompt": "Vertical shot of a glowing geometric cyan token-like crystal shape hovering above an open palm of a Central Asian woman, deep navy background with soft particles, warm skin tone contrast, volumetric light, photorealistic studio render feel, editorial, no text, no brand marks, not a crypto coin — abstract geometric shape",
+      "video_prompt": "The crystal shape rotates slowly 30 degrees and pulses with light once, particles drift upward, her hand very subtly rises, 8 seconds vertical locked frame"
+    }
+  ],
+  "notes": {
+    "style_anchors": [
+      "Kodak Portra color grading",
+      "matte film texture not digital glossy",
+      "navy + warm off-white + single electric accent",
+      "editorial photography not stock photography"
+    ],
+    "people_casting": [
+      "mix Slavic, Central Asian, Caucasian, mixed heritage — CIS realistic",
+      "ages 25-45 mostly, one 45+ for credibility",
+      "natural skin, no heavy retouching, no stock smiles"
+    ],
+    "avoid": [
+      "generic Silicon Valley loft offices",
+      "crypto/NFT/Web3 scam aesthetic",
+      "fake overly-white smiles",
+      "visible brand logos or real text",
+      "Dutch angles or wild camera moves in Seedance"
+    ]
+  }
+}

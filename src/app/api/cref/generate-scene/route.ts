@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { resolveProvider } from '@/lib/providers/resolve-provider';
 
 const LEONARDO_API = 'https://cloud.leonardo.ai/api/rest/v1';
 
@@ -14,13 +15,34 @@ export async function POST(request: NextRequest) {
       aspectRatio = '16:9',
     } = body;
 
+    if (!scenePrompt) {
+      return NextResponse.json({ error: 'scenePrompt is required' }, { status: 400 });
+    }
+
+    // --- Higgsfield branch (SeaDream 5 Lite) ---
+    const { provider, mode } = await resolveProvider();
+    if (mode === 'higgsfield') {
+      const hf = provider as any;
+      await hf.connect();
+      try {
+        const charHint = characterDescription
+          ? `${characterName ? characterName + ', ' : ''}${characterDescription}. `
+          : '';
+        const fullPrompt = `${charHint}${scenePrompt}, ${style} style`;
+        const images = await hf.generateImage(fullPrompt, { model: 'seedream-5-lite', count: 1 });
+        if (!images || images.length === 0) {
+          return NextResponse.json({ error: 'SeaDream returned no images' }, { status: 502 });
+        }
+        return NextResponse.json({ success: true, imageUrl: images[0] });
+      } finally {
+        await hf.disconnect();
+      }
+    }
+
+    // --- Leonardo branch (default) ---
     const apiKey = process.env.LEONARDO_API_KEY;
     if (!apiKey) {
       return NextResponse.json({ error: 'LEONARDO_API_KEY not configured' }, { status: 500 });
-    }
-
-    if (!scenePrompt) {
-      return NextResponse.json({ error: 'scenePrompt is required' }, { status: 400 });
     }
 
     const modelMap: Record<string, string> = {

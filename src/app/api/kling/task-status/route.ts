@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { klingFetch } from '@/lib/kling';
+import { resolveProvider } from '@/lib/providers/resolve-provider';
 
 export async function GET(request: NextRequest) {
   const taskId = request.nextUrl.searchParams.get('taskId');
@@ -7,26 +7,24 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'taskId is required' }, { status: 400 });
   }
 
-  if (!process.env.KLING_ACCESS_KEY || !process.env.KLING_SECRET_KEY) {
-    return NextResponse.json({ error: 'Kling API keys not configured' }, { status: 500 });
-  }
-
   try {
-    const res = await klingFetch(`/videos/image2video/${taskId}`);
-    if (!res.ok) {
-      const err = await res.text();
-      return NextResponse.json({ error: `Kling API error: ${err}` }, { status: res.status });
+    const { provider, mode } = await resolveProvider();
+
+    // Higgsfield getStatus проверяет файлы локально — connect не нужен
+    if (mode === 'api') {
+      if (!process.env.KLING_ACCESS_KEY || !process.env.KLING_SECRET_KEY) {
+        return NextResponse.json({ error: 'Kling API keys not configured' }, { status: 500 });
+      }
     }
 
-    const data = await res.json();
-    const task = data?.data;
+    const job = await provider.getStatus(taskId);
 
     return NextResponse.json({
       taskId,
-      status: task?.task_status,
-      statusMsg: task?.task_status_msg,
-      videoUrl: task?.task_result?.videos?.[0]?.url ?? null,
-      videoDuration: task?.task_result?.videos?.[0]?.duration ?? null,
+      status: job.status,
+      statusMsg: job.error ?? null,
+      videoUrl: job.resultUrl ?? null,
+      videoDuration: null,
     });
 
   } catch (error: unknown) {

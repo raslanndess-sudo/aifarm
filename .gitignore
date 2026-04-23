@@ -33,6 +33,24 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# database
+/data/
+
+# agent team runtime (live chat resets on start, panes.env generated per session)
+/.claude/agents/chat.md
+/.claude/agents/panes.env
+/.claude/scheduled_tasks.lock
+/.claude/settings.local.json
+
+# local skills
+/.ui-ux-skill/
+
+# working-directory experiment artifacts (Higgsfield image/video tests)
+/balloon*
+/kitten*
+/hg_screenshot*.png
+/structure.txt
+
 # vercel
 .vercel
 

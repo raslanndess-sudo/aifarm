@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { submitKlingImageToVideo } from '@/lib/kling';
+import { resolveProvider } from '@/lib/providers/resolve-provider';
 
 export const maxDuration = 300; // 5 min for Vercel
 
@@ -8,6 +8,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const {
       imageUrl,
+      endImageUrl,
       animationPrompt = '',
       modelName = 'kling-v1',
       duration = '5',
@@ -16,10 +17,6 @@ export async function POST(request: NextRequest) {
 
     if (!imageUrl) {
       return NextResponse.json({ error: 'imageUrl is required' }, { status: 400 });
-    }
-
-    if (!process.env.KLING_ACCESS_KEY || !process.env.KLING_SECRET_KEY) {
-      return NextResponse.json({ error: 'Kling API keys not configured' }, { status: 500 });
     }
 
     // Download image → pure base64 (Kling requires raw base64, no data URI prefix)
@@ -36,27 +33,52 @@ export async function POST(request: NextRequest) {
       imageBase64 = imageUrl;
     }
 
-    // Submit task — returns task_id immediately
+    // Convert end frame to base64 if provided
+    let endImageBase64: string | undefined;
+    if (endImageUrl) {
+      if (endImageUrl.startsWith('http')) {
+        const endRes = await fetch(endImageUrl);
+        if (!endRes.ok) throw new Error(`Failed to download end image: ${endRes.status}`);
+        const endBuf = await endRes.arrayBuffer();
+        endImageBase64 = Buffer.from(endBuf).toString('base64');
+      } else if (endImageUrl.startsWith('data:')) {
+        endImageBase64 = endImageUrl.split(',')[1] ?? endImageUrl;
+      } else {
+        endImageBase64 = endImageUrl;
+      }
+    }
+
+    const { provider, mode: providerMode } = await resolveProvider();
+
     let taskId: string;
     try {
-      taskId = await submitKlingImageToVideo({
-        imageUrl: imageBase64,
-        animationPrompt,
-        modelName,
-        duration,
-        mode,
-      });
+      if (providerMode === 'higgsfield') {
+        const hf = provider as any;
+        await hf.connect();
+        try {
+          const job = await provider.generateVideo({ imageUrl: imageBase64, endImageUrl: endImageBase64, prompt: animationPrompt, model: modelName, duration, mode });
+          taskId = job.jobId;
+        } finally {
+          await hf.disconnect();
+        }
+      } else {
+        if (!process.env.KLING_ACCESS_KEY || !process.env.KLING_SECRET_KEY) {
+          return NextResponse.json({ error: 'Kling API keys not configured' }, { status: 500 });
+        }
+        const job = await provider.generateVideo({ imageUrl: imageBase64, endImageUrl: endImageBase64, prompt: animationPrompt, model: modelName, duration, mode });
+        taskId = job.jobId;
+      }
     } catch (klingErr: unknown) {
       const msg = klingErr instanceof Error ? klingErr.message : String(klingErr);
-      console.error('[Kling] submitKlingImageToVideo error:', msg);
-      return NextResponse.json({ error: `Kling submit failed: ${msg}` }, { status: 500 });
+      console.error('[generate-video] error:', msg);
+      return NextResponse.json({ error: `Submit failed: ${msg}` }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, taskId, status: 'submitted' });
 
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('[Kling] generate-video error:', message);
+    console.error('[generate-video] error:', message);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
