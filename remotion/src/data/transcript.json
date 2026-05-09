@@ -1,0 +1,2100 @@
+{
+  "language": "en",
+  "duration": 101.9306875,
+  "words": [
+    {
+      "word": "You",
+      "start": 0.0,
+      "end": 0.16,
+      "prob": 0.785
+    },
+    {
+      "word": "think",
+      "start": 0.16,
+      "end": 0.3,
+      "prob": 0.992
+    },
+    {
+      "word": "this",
+      "start": 0.3,
+      "end": 0.44,
+      "prob": 0.986
+    },
+    {
+      "word": "is",
+      "start": 0.44,
+      "end": 0.58,
+      "prob": 0.991
+    },
+    {
+      "word": "just",
+      "start": 0.58,
+      "end": 0.72,
+      "prob": 0.997
+    },
+    {
+      "word": "a",
+      "start": 0.72,
+      "end": 0.86,
+      "prob": 0.984
+    },
+    {
+      "word": "keyboard?",
+      "start": 0.86,
+      "end": 1.18,
+      "prob": 0.997
+    },
+    {
+      "word": "HP",
+      "start": 1.58,
+      "end": 1.78,
+      "prob": 0.882
+    },
+    {
+      "word": "shoved",
+      "start": 1.78,
+      "end": 2.18,
+      "prob": 0.979
+    },
+    {
+      "word": "an",
+      "start": 2.18,
+      "end": 2.38,
+      "prob": 0.988
+    },
+    {
+      "word": "entire",
+      "start": 2.38,
+      "end": 2.78,
+      "prob": 0.996
+    },
+    {
+      "word": "computer",
+      "start": 2.78,
+      "end": 3.2,
+      "prob": 0.998
+    },
+    {
+      "word": "inside",
+      "start": 3.2,
+      "end": 3.58,
+      "prob": 0.992
+    },
+    {
+      "word": "a",
+      "start": 3.58,
+      "end": 3.78,
+      "prob": 0.992
+    },
+    {
+      "word": "regular",
+      "start": 3.78,
+      "end": 4.04,
+      "prob": 0.995
+    },
+    {
+      "word": "keyboard,",
+      "start": 4.04,
+      "end": 4.5,
+      "prob": 0.999
+    },
+    {
+      "word": "and",
+      "start": 4.78,
+      "end": 4.98,
+      "prob": 0.974
+    },
+    {
+      "word": "it's",
+      "start": 4.98,
+      "end": 5.16,
+      "prob": 0.993
+    },
+    {
+      "word": "not",
+      "start": 5.16,
+      "end": 5.3,
+      "prob": 0.996
+    },
+    {
+      "word": "a",
+      "start": 5.3,
+      "end": 5.42,
+      "prob": 0.998
+    },
+    {
+      "word": "joke.",
+      "start": 5.42,
+      "end": 5.62,
+      "prob": 0.999
+    },
+    {
+      "word": "It's",
+      "start": 5.9,
+      "end": 6.04,
+      "prob": 0.993
+    },
+    {
+      "word": "called",
+      "start": 6.04,
+      "end": 6.16,
+      "prob": 0.998
+    },
+    {
+      "word": "the",
+      "start": 6.16,
+      "end": 6.28,
+      "prob": 0.99
+    },
+    {
+      "word": "HP",
+      "start": 6.28,
+      "end": 6.68,
+      "prob": 0.974
+    },
+    {
+      "word": "Elite",
+      "start": 6.68,
+      "end": 7.0,
+      "prob": 0.949
+    },
+    {
+      "word": "Board",
+      "start": 7.0,
+      "end": 7.24,
+      "prob": 0.442
+    },
+    {
+      "word": "G1.",
+      "start": 7.24,
+      "end": 7.9,
+      "prob": 0.97
+    },
+    {
+      "word": "It",
+      "start": 8.16,
+      "end": 8.18,
+      "prob": 0.97
+    },
+    {
+      "word": "weighs",
+      "start": 8.18,
+      "end": 8.32,
+      "prob": 0.991
+    },
+    {
+      "word": "750",
+      "start": 8.32,
+      "end": 8.98,
+      "prob": 0.991
+    },
+    {
+      "word": "grams",
+      "start": 8.98,
+      "end": 9.34,
+      "prob": 0.859
+    },
+    {
+      "word": "and",
+      "start": 9.34,
+      "end": 9.58,
+      "prob": 0.888
+    },
+    {
+      "word": "is",
+      "start": 9.58,
+      "end": 9.7,
+      "prob": 0.955
+    },
+    {
+      "word": "12",
+      "start": 9.7,
+      "end": 9.94,
+      "prob": 0.982
+    },
+    {
+      "word": "millimeters",
+      "start": 9.94,
+      "end": 10.34,
+      "prob": 0.919
+    },
+    {
+      "word": "thick.",
+      "start": 10.34,
+      "end": 10.64,
+      "prob": 0.995
+    },
+    {
+      "word": "It's",
+      "start": 10.94,
+      "end": 11.1,
+      "prob": 0.992
+    },
+    {
+      "word": "thinner",
+      "start": 11.1,
+      "end": 11.28,
+      "prob": 0.998
+    },
+    {
+      "word": "than",
+      "start": 11.28,
+      "end": 11.5,
+      "prob": 0.998
+    },
+    {
+      "word": "an",
+      "start": 11.5,
+      "end": 11.68,
+      "prob": 0.995
+    },
+    {
+      "word": "iPhone.",
+      "start": 11.68,
+      "end": 11.94,
+      "prob": 0.979
+    },
+    {
+      "word": "And",
+      "start": 12.12,
+      "end": 12.2,
+      "prob": 0.968
+    },
+    {
+      "word": "it's",
+      "start": 12.2,
+      "end": 12.32,
+      "prob": 0.995
+    },
+    {
+      "word": "not",
+      "start": 12.32,
+      "end": 12.44,
+      "prob": 0.999
+    },
+    {
+      "word": "a",
+      "start": 12.44,
+      "end": 12.54,
+      "prob": 0.994
+    },
+    {
+      "word": "keyboard,",
+      "start": 12.54,
+      "end": 12.84,
+      "prob": 0.999
+    },
+    {
+      "word": "it's",
+      "start": 12.98,
+      "end": 13.18,
+      "prob": 0.989
+    },
+    {
+      "word": "a",
+      "start": 13.18,
+      "end": 13.26,
+      "prob": 0.999
+    },
+    {
+      "word": "computer.",
+      "start": 13.26,
+      "end": 13.56,
+      "prob": 0.999
+    },
+    {
+      "word": "They",
+      "start": 13.92,
+      "end": 14.0,
+      "prob": 0.991
+    },
+    {
+      "word": "cranched",
+      "start": 14.0,
+      "end": 14.32,
+      "prob": 0.796
+    },
+    {
+      "word": "an",
+      "start": 14.32,
+      "end": 14.42,
+      "prob": 0.99
+    },
+    {
+      "word": "entire",
+      "start": 14.42,
+      "end": 14.8,
+      "prob": 1.0
+    },
+    {
+      "word": "PC",
+      "start": 14.8,
+      "end": 15.08,
+      "prob": 0.979
+    },
+    {
+      "word": "into",
+      "start": 15.08,
+      "end": 15.38,
+      "prob": 0.997
+    },
+    {
+      "word": "a",
+      "start": 15.38,
+      "end": 15.54,
+      "prob": 0.998
+    },
+    {
+      "word": "case",
+      "start": 15.54,
+      "end": 15.72,
+      "prob": 0.999
+    },
+    {
+      "word": "that's",
+      "start": 15.72,
+      "end": 16.04,
+      "prob": 0.991
+    },
+    {
+      "word": "12",
+      "start": 16.04,
+      "end": 16.26,
+      "prob": 0.993
+    },
+    {
+      "word": "millimeters",
+      "start": 16.26,
+      "end": 16.66,
+      "prob": 0.994
+    },
+    {
+      "word": "thin",
+      "start": 16.66,
+      "end": 16.94,
+      "prob": 0.991
+    },
+    {
+      "word": "and",
+      "start": 16.94,
+      "end": 17.1,
+      "prob": 0.811
+    },
+    {
+      "word": "weighs",
+      "start": 17.1,
+      "end": 17.28,
+      "prob": 0.977
+    },
+    {
+      "word": "750",
+      "start": 17.28,
+      "end": 17.96,
+      "prob": 0.997
+    },
+    {
+      "word": "grams.",
+      "start": 17.96,
+      "end": 18.38,
+      "prob": 0.996
+    },
+    {
+      "word": "Inside,",
+      "start": 18.52,
+      "end": 18.84,
+      "prob": 0.997
+    },
+    {
+      "word": "AMBD",
+      "start": 19.14,
+      "end": 19.48,
+      "prob": 0.686
+    },
+    {
+      "word": "Ryzen",
+      "start": 19.48,
+      "end": 19.78,
+      "prob": 0.915
+    },
+    {
+      "word": "AI",
+      "start": 19.78,
+      "end": 20.1,
+      "prob": 0.918
+    },
+    {
+      "word": "300",
+      "start": 20.1,
+      "end": 20.58,
+      "prob": 0.981
+    },
+    {
+      "word": "series.",
+      "start": 20.58,
+      "end": 20.84,
+      "prob": 0.682
+    },
+    {
+      "word": "Up",
+      "start": 21.0,
+      "end": 21.02,
+      "prob": 0.975
+    },
+    {
+      "word": "to",
+      "start": 21.02,
+      "end": 21.16,
+      "prob": 0.998
+    },
+    {
+      "word": "32",
+      "start": 21.16,
+      "end": 21.56,
+      "prob": 0.998
+    },
+    {
+      "word": "gigs",
+      "start": 21.56,
+      "end": 21.72,
+      "prob": 0.961
+    },
+    {
+      "word": "of",
+      "start": 21.72,
+      "end": 21.92,
+      "prob": 0.998
+    },
+    {
+      "word": "RAM,",
+      "start": 21.92,
+      "end": 22.12,
+      "prob": 0.869
+    },
+    {
+      "word": "up",
+      "start": 22.3,
+      "end": 22.36,
+      "prob": 0.996
+    },
+    {
+      "word": "to",
+      "start": 22.36,
+      "end": 22.52,
+      "prob": 0.996
+    },
+    {
+      "word": "two",
+      "start": 22.52,
+      "end": 22.7,
+      "prob": 0.591
+    },
+    {
+      "word": "terabytes",
+      "start": 22.7,
+      "end": 23.06,
+      "prob": 0.994
+    },
+    {
+      "word": "of",
+      "start": 23.06,
+      "end": 23.26,
+      "prob": 0.998
+    },
+    {
+      "word": "SSD.",
+      "start": 23.26,
+      "end": 23.52,
+      "prob": 0.998
+    },
+    {
+      "word": "Bro,",
+      "start": 23.94,
+      "end": 24.06,
+      "prob": 0.982
+    },
+    {
+      "word": "that's",
+      "start": 24.32,
+      "end": 24.54,
+      "prob": 0.998
+    },
+    {
+      "word": "the",
+      "start": 24.54,
+      "end": 24.62,
+      "prob": 0.998
+    },
+    {
+      "word": "spec",
+      "start": 24.62,
+      "end": 24.84,
+      "prob": 0.981
+    },
+    {
+      "word": "sheet",
+      "start": 24.84,
+      "end": 25.02,
+      "prob": 0.998
+    },
+    {
+      "word": "of",
+      "start": 25.02,
+      "end": 25.14,
+      "prob": 0.998
+    },
+    {
+      "word": "my",
+      "start": 25.14,
+      "end": 25.32,
+      "prob": 0.999
+    },
+    {
+      "word": "work",
+      "start": 25.32,
+      "end": 25.52,
+      "prob": 0.956
+    },
+    {
+      "word": "PC",
+      "start": 25.52,
+      "end": 25.88,
+      "prob": 0.984
+    },
+    {
+      "word": "in",
+      "start": 25.88,
+      "end": 26.32,
+      "prob": 0.619
+    },
+    {
+      "word": "a",
+      "start": 26.32,
+      "end": 26.46,
+      "prob": 0.998
+    },
+    {
+      "word": "keyboard.",
+      "start": 26.46,
+      "end": 26.76,
+      "prob": 0.999
+    },
+    {
+      "word": "On",
+      "start": 26.96,
+      "end": 27.04,
+      "prob": 0.994
+    },
+    {
+      "word": "the",
+      "start": 27.04,
+      "end": 27.16,
+      "prob": 1.0
+    },
+    {
+      "word": "outside,",
+      "start": 27.16,
+      "end": 27.5,
+      "prob": 0.999
+    },
+    {
+      "word": "it",
+      "start": 27.54,
+      "end": 27.66,
+      "prob": 0.998
+    },
+    {
+      "word": "looks",
+      "start": 27.66,
+      "end": 27.82,
+      "prob": 0.999
+    },
+    {
+      "word": "ordinary.",
+      "start": 27.82,
+      "end": 28.28,
+      "prob": 0.999
+    },
+    {
+      "word": "Flat",
+      "start": 28.28,
+      "end": 28.8,
+      "prob": 0.326
+    },
+    {
+      "word": "keys,",
+      "start": 28.8,
+      "end": 29.2,
+      "prob": 0.774
+    },
+    {
+      "word": "membrane",
+      "start": 29.48,
+      "end": 29.66,
+      "prob": 0.838
+    },
+    {
+      "word": "switches,",
+      "start": 29.66,
+      "end": 30.24,
+      "prob": 0.989
+    },
+    {
+      "word": "thin",
+      "start": 30.68,
+      "end": 30.8,
+      "prob": 0.926
+    },
+    {
+      "word": "profile.",
+      "start": 30.8,
+      "end": 31.3,
+      "prob": 0.989
+    },
+    {
+      "word": "There's",
+      "start": 31.58,
+      "end": 31.7,
+      "prob": 0.984
+    },
+    {
+      "word": "a",
+      "start": 31.7,
+      "end": 31.84,
+      "prob": 0.997
+    },
+    {
+      "word": "dedicated",
+      "start": 31.84,
+      "end": 32.28,
+      "prob": 0.999
+    },
+    {
+      "word": "copilot",
+      "start": 32.28,
+      "end": 32.86,
+      "prob": 0.502
+    },
+    {
+      "word": "key",
+      "start": 32.86,
+      "end": 33.18,
+      "prob": 0.997
+    },
+    {
+      "word": "because",
+      "start": 33.18,
+      "end": 33.58,
+      "prob": 0.722
+    },
+    {
+      "word": "in",
+      "start": 33.58,
+      "end": 33.74,
+      "prob": 0.986
+    },
+    {
+      "word": "2026,",
+      "start": 33.74,
+      "end": 34.48,
+      "prob": 0.985
+    },
+    {
+      "word": "you",
+      "start": 34.48,
+      "end": 34.72,
+      "prob": 0.997
+    },
+    {
+      "word": "can't",
+      "start": 34.72,
+      "end": 34.98,
+      "prob": 0.999
+    },
+    {
+      "word": "even",
+      "start": 34.98,
+      "end": 35.16,
+      "prob": 0.999
+    },
+    {
+      "word": "sell",
+      "start": 35.16,
+      "end": 35.5,
+      "prob": 0.998
+    },
+    {
+      "word": "a",
+      "start": 35.5,
+      "end": 35.7,
+      "prob": 0.996
+    },
+    {
+      "word": "keyboard",
+      "start": 35.7,
+      "end": 35.98,
+      "prob": 0.999
+    },
+    {
+      "word": "without",
+      "start": 35.98,
+      "end": 36.32,
+      "prob": 0.999
+    },
+    {
+      "word": "AI",
+      "start": 36.32,
+      "end": 36.72,
+      "prob": 0.987
+    },
+    {
+      "word": "anymore.",
+      "start": 36.72,
+      "end": 37.12,
+      "prob": 0.977
+    },
+    {
+      "word": "Typing",
+      "start": 37.48,
+      "end": 37.66,
+      "prob": 0.991
+    },
+    {
+      "word": "on",
+      "start": 37.66,
+      "end": 37.8,
+      "prob": 0.999
+    },
+    {
+      "word": "it",
+      "start": 37.8,
+      "end": 37.92,
+      "prob": 0.999
+    },
+    {
+      "word": "is",
+      "start": 37.92,
+      "end": 38.14,
+      "prob": 0.988
+    },
+    {
+      "word": "fine.",
+      "start": 38.14,
+      "end": 38.46,
+      "prob": 0.999
+    },
+    {
+      "word": "It's",
+      "start": 38.9,
+      "end": 39.06,
+      "prob": 0.998
+    },
+    {
+      "word": "not",
+      "start": 39.06,
+      "end": 39.22,
+      "prob": 0.999
+    },
+    {
+      "word": "a",
+      "start": 39.22,
+      "end": 39.3,
+      "prob": 0.994
+    },
+    {
+      "word": "mechanical,",
+      "start": 39.3,
+      "end": 39.7,
+      "prob": 0.999
+    },
+    {
+      "word": "not",
+      "start": 40.08,
+      "end": 40.3,
+      "prob": 0.998
+    },
+    {
+      "word": "wow,",
+      "start": 40.3,
+      "end": 40.58,
+      "prob": 0.623
+    },
+    {
+      "word": "but",
+      "start": 40.9,
+      "end": 41.02,
+      "prob": 0.999
+    },
+    {
+      "word": "not",
+      "start": 41.02,
+      "end": 41.18,
+      "prob": 0.998
+    },
+    {
+      "word": "cheap",
+      "start": 41.18,
+      "end": 41.44,
+      "prob": 0.998
+    },
+    {
+      "word": "either.",
+      "start": 41.44,
+      "end": 41.72,
+      "prob": 0.933
+    },
+    {
+      "word": "Bonus,",
+      "start": 42.12,
+      "end": 42.12,
+      "prob": 0.902
+    },
+    {
+      "word": "it's",
+      "start": 42.48,
+      "end": 42.68,
+      "prob": 0.991
+    },
+    {
+      "word": "spill",
+      "start": 42.68,
+      "end": 42.94,
+      "prob": 0.957
+    },
+    {
+      "word": "resistant.",
+      "start": 42.94,
+      "end": 43.34,
+      "prob": 0.855
+    },
+    {
+      "word": "Spilled",
+      "start": 43.7,
+      "end": 43.88,
+      "prob": 0.984
+    },
+    {
+      "word": "coffee",
+      "start": 43.88,
+      "end": 44.22,
+      "prob": 0.998
+    },
+    {
+      "word": "in",
+      "start": 44.22,
+      "end": 44.34,
+      "prob": 0.974
+    },
+    {
+      "word": "a",
+      "start": 44.34,
+      "end": 44.42,
+      "prob": 0.998
+    },
+    {
+      "word": "meeting,",
+      "start": 44.42,
+      "end": 44.6,
+      "prob": 0.999
+    },
+    {
+      "word": "wipe",
+      "start": 44.98,
+      "end": 45.1,
+      "prob": 0.998
+    },
+    {
+      "word": "it",
+      "start": 45.1,
+      "end": 45.24,
+      "prob": 0.999
+    },
+    {
+      "word": "off,",
+      "start": 45.24,
+      "end": 45.46,
+      "prob": 0.999
+    },
+    {
+      "word": "keep",
+      "start": 45.8,
+      "end": 45.94,
+      "prob": 0.998
+    },
+    {
+      "word": "working.",
+      "start": 45.94,
+      "end": 46.3,
+      "prob": 1.0
+    },
+    {
+      "word": "Picture",
+      "start": 46.64,
+      "end": 46.64,
+      "prob": 0.993
+    },
+    {
+      "word": "this,",
+      "start": 46.64,
+      "end": 46.96,
+      "prob": 0.998
+    },
+    {
+      "word": "you",
+      "start": 47.3,
+      "end": 47.46,
+      "prob": 0.996
+    },
+    {
+      "word": "walk",
+      "start": 47.46,
+      "end": 47.66,
+      "prob": 0.998
+    },
+    {
+      "word": "into",
+      "start": 47.66,
+      "end": 47.84,
+      "prob": 0.998
+    },
+    {
+      "word": "the",
+      "start": 47.84,
+      "end": 47.98,
+      "prob": 0.999
+    },
+    {
+      "word": "office,",
+      "start": 47.98,
+      "end": 48.3,
+      "prob": 0.999
+    },
+    {
+      "word": "plug",
+      "start": 48.48,
+      "end": 48.66,
+      "prob": 0.986
+    },
+    {
+      "word": "USB",
+      "start": 48.66,
+      "end": 48.96,
+      "prob": 0.725
+    },
+    {
+      "word": "-C",
+      "start": 48.96,
+      "end": 49.3,
+      "prob": 0.931
+    },
+    {
+      "word": "to",
+      "start": 49.3,
+      "end": 49.48,
+      "prob": 0.998
+    },
+    {
+      "word": "a",
+      "start": 49.48,
+      "end": 49.58,
+      "prob": 0.998
+    },
+    {
+      "word": "monitor,",
+      "start": 49.58,
+      "end": 49.92,
+      "prob": 0.999
+    },
+    {
+      "word": "boom,",
+      "start": 50.24,
+      "end": 50.4,
+      "prob": 0.971
+    },
+    {
+      "word": "desktop.",
+      "start": 50.72,
+      "end": 50.9,
+      "prob": 0.996
+    },
+    {
+      "word": "You",
+      "start": 51.2,
+      "end": 51.3,
+      "prob": 0.999
+    },
+    {
+      "word": "go",
+      "start": 51.3,
+      "end": 51.46,
+      "prob": 0.999
+    },
+    {
+      "word": "home,",
+      "start": 51.46,
+      "end": 51.64,
+      "prob": 0.998
+    },
+    {
+      "word": "plug",
+      "start": 51.68,
+      "end": 51.84,
+      "prob": 0.996
+    },
+    {
+      "word": "it",
+      "start": 51.84,
+      "end": 51.94,
+      "prob": 0.989
+    },
+    {
+      "word": "into",
+      "start": 51.94,
+      "end": 52.1,
+      "prob": 0.972
+    },
+    {
+      "word": "your",
+      "start": 52.1,
+      "end": 52.22,
+      "prob": 0.998
+    },
+    {
+      "word": "monitor",
+      "start": 52.22,
+      "end": 52.48,
+      "prob": 1.0
+    },
+    {
+      "word": "there,",
+      "start": 52.48,
+      "end": 52.78,
+      "prob": 0.98
+    },
+    {
+      "word": "same",
+      "start": 52.98,
+      "end": 53.14,
+      "prob": 0.999
+    },
+    {
+      "word": "desktop.",
+      "start": 53.14,
+      "end": 53.52,
+      "prob": 0.999
+    },
+    {
+      "word": "All",
+      "start": 53.8,
+      "end": 53.94,
+      "prob": 0.999
+    },
+    {
+      "word": "your",
+      "start": 53.94,
+      "end": 54.08,
+      "prob": 0.998
+    },
+    {
+      "word": "files,",
+      "start": 54.08,
+      "end": 54.38,
+      "prob": 0.999
+    },
+    {
+      "word": "all",
+      "start": 54.52,
+      "end": 54.66,
+      "prob": 0.999
+    },
+    {
+      "word": "your",
+      "start": 54.66,
+      "end": 54.8,
+      "prob": 0.999
+    },
+    {
+      "word": "apps,",
+      "start": 54.8,
+      "end": 55.04,
+      "prob": 0.999
+    },
+    {
+      "word": "all",
+      "start": 55.14,
+      "end": 55.28,
+      "prob": 1.0
+    },
+    {
+      "word": "your",
+      "start": 55.28,
+      "end": 55.42,
+      "prob": 0.999
+    },
+    {
+      "word": "settings,",
+      "start": 55.42,
+      "end": 55.7,
+      "prob": 0.999
+    },
+    {
+      "word": "no",
+      "start": 55.94,
+      "end": 56.08,
+      "prob": 0.998
+    },
+    {
+      "word": "laptop",
+      "start": 56.08,
+      "end": 56.36,
+      "prob": 0.998
+    },
+    {
+      "word": "to",
+      "start": 56.36,
+      "end": 56.62,
+      "prob": 0.999
+    },
+    {
+      "word": "carry.",
+      "start": 56.62,
+      "end": 56.82,
+      "prob": 0.999
+    },
+    {
+      "word": "I",
+      "start": 56.92,
+      "end": 57.06,
+      "prob": 0.998
+    },
+    {
+      "word": "worked",
+      "start": 57.06,
+      "end": 57.24,
+      "prob": 0.998
+    },
+    {
+      "word": "on",
+      "start": 57.24,
+      "end": 57.36,
+      "prob": 0.999
+    },
+    {
+      "word": "it",
+      "start": 57.36,
+      "end": 57.48,
+      "prob": 0.999
+    },
+    {
+      "word": "for",
+      "start": 57.48,
+      "end": 57.62,
+      "prob": 0.999
+    },
+    {
+      "word": "a",
+      "start": 57.62,
+      "end": 57.74,
+      "prob": 0.998
+    },
+    {
+      "word": "week.",
+      "start": 57.74,
+      "end": 57.94,
+      "prob": 0.999
+    },
+    {
+      "word": "Coding,",
+      "start": 57.94,
+      "end": 58.54,
+      "prob": 0.557
+    },
+    {
+      "word": "video",
+      "start": 58.82,
+      "end": 59.04,
+      "prob": 0.989
+    },
+    {
+      "word": "editing,",
+      "start": 59.04,
+      "end": 59.42,
+      "prob": 0.989
+    },
+    {
+      "word": "zoom",
+      "start": 59.68,
+      "end": 59.84,
+      "prob": 0.78
+    },
+    {
+      "word": "calls,",
+      "start": 59.84,
+      "end": 60.28,
+      "prob": 0.993
+    },
+    {
+      "word": "rendering.",
+      "start": 60.46,
+      "end": 60.74,
+      "prob": 0.978
+    },
+    {
+      "word": "Nothing",
+      "start": 61.12,
+      "end": 61.36,
+      "prob": 0.978
+    },
+    {
+      "word": "lagged,",
+      "start": 61.36,
+      "end": 61.8,
+      "prob": 0.873
+    },
+    {
+      "word": "nothing",
+      "start": 61.94,
+      "end": 62.16,
+      "prob": 0.995
+    },
+    {
+      "word": "froze.",
+      "start": 62.16,
+      "end": 62.56,
+      "prob": 0.998
+    },
+    {
+      "word": "It",
+      "start": 63.0,
+      "end": 63.1,
+      "prob": 0.988
+    },
+    {
+      "word": "just",
+      "start": 63.1,
+      "end": 63.28,
+      "prob": 0.994
+    },
+    {
+      "word": "works.",
+      "start": 63.28,
+      "end": 63.76,
+      "prob": 0.99
+    },
+    {
+      "word": "For",
+      "start": 64.34,
+      "end": 64.36,
+      "prob": 0.32
+    },
+    {
+      "word": "PC,",
+      "start": 64.36,
+      "end": 64.6,
+      "prob": 0.89
+    },
+    {
+      "word": "you're",
+      "start": 64.76,
+      "end": 64.84,
+      "prob": 0.706
+    },
+    {
+      "word": "being",
+      "start": 64.84,
+      "end": 64.96,
+      "prob": 0.736
+    },
+    {
+      "word": "invented",
+      "start": 64.96,
+      "end": 65.24,
+      "prob": 0.887
+    },
+    {
+      "word": "super",
+      "start": 65.24,
+      "end": 65.48,
+      "prob": 0.437
+    },
+    {
+      "word": "hour",
+      "start": 65.48,
+      "end": 65.68,
+      "prob": 0.803
+    },
+    {
+      "word": "CH.",
+      "start": 65.68,
+      "end": 65.96,
+      "prob": 0.627
+    },
+    {
+      "word": "And",
+      "start": 66.34,
+      "end": 66.46,
+      "prob": 0.959
+    },
+    {
+      "word": "then",
+      "start": 66.46,
+      "end": 66.58,
+      "prob": 0.989
+    },
+    {
+      "word": "it",
+      "start": 66.58,
+      "end": 66.7,
+      "prob": 0.978
+    },
+    {
+      "word": "hit",
+      "start": 66.7,
+      "end": 66.86,
+      "prob": 0.998
+    },
+    {
+      "word": "me",
+      "start": 66.86,
+      "end": 67.0,
+      "prob": 0.991
+    },
+    {
+      "word": "what",
+      "start": 67.0,
+      "end": 67.18,
+      "prob": 0.927
+    },
+    {
+      "word": "H",
+      "start": 67.18,
+      "end": 67.34,
+      "prob": 0.361
+    },
+    {
+      "word": "really",
+      "start": 67.34,
+      "end": 67.52,
+      "prob": 0.091
+    },
+    {
+      "word": "did.",
+      "start": 67.52,
+      "end": 67.82,
+      "prob": 0.995
+    },
+    {
+      "word": "They",
+      "start": 68.12,
+      "end": 68.22,
+      "prob": 0.991
+    },
+    {
+      "word": "didn't",
+      "start": 68.22,
+      "end": 68.44,
+      "prob": 0.999
+    },
+    {
+      "word": "improve",
+      "start": 68.44,
+      "end": 68.74,
+      "prob": 0.996
+    },
+    {
+      "word": "a",
+      "start": 68.74,
+      "end": 68.9,
+      "prob": 0.986
+    },
+    {
+      "word": "keyboard.",
+      "start": 68.9,
+      "end": 69.22,
+      "prob": 0.999
+    },
+    {
+      "word": "They",
+      "start": 69.5,
+      "end": 69.64,
+      "prob": 0.993
+    },
+    {
+      "word": "reinvented",
+      "start": 69.64,
+      "end": 70.36,
+      "prob": 0.991
+    },
+    {
+      "word": "the",
+      "start": 70.36,
+      "end": 70.5,
+      "prob": 0.997
+    },
+    {
+      "word": "whole",
+      "start": 70.5,
+      "end": 70.84,
+      "prob": 0.998
+    },
+    {
+      "word": "workstation",
+      "start": 70.84,
+      "end": 71.36,
+      "prob": 0.947
+    },
+    {
+      "word": "format.",
+      "start": 71.36,
+      "end": 71.86,
+      "prob": 0.997
+    },
+    {
+      "word": "You",
+      "start": 72.02,
+      "end": 72.02,
+      "prob": 0.992
+    },
+    {
+      "word": "don't",
+      "start": 72.02,
+      "end": 72.14,
+      "prob": 1.0
+    },
+    {
+      "word": "need",
+      "start": 72.14,
+      "end": 72.28,
+      "prob": 0.998
+    },
+    {
+      "word": "a",
+      "start": 72.28,
+      "end": 72.38,
+      "prob": 0.997
+    },
+    {
+      "word": "mini",
+      "start": 72.38,
+      "end": 72.52,
+      "prob": 0.987
+    },
+    {
+      "word": "PC",
+      "start": 72.52,
+      "end": 72.8,
+      "prob": 0.919
+    },
+    {
+      "word": "under",
+      "start": 72.8,
+      "end": 73.04,
+      "prob": 0.988
+    },
+    {
+      "word": "your",
+      "start": 73.04,
+      "end": 73.2,
+      "prob": 0.997
+    },
+    {
+      "word": "desk.",
+      "start": 73.2,
+      "end": 73.48,
+      "prob": 0.998
+    },
+    {
+      "word": "You",
+      "start": 73.64,
+      "end": 73.74,
+      "prob": 0.997
+    },
+    {
+      "word": "don't",
+      "start": 73.74,
+      "end": 73.88,
+      "prob": 0.999
+    },
+    {
+      "word": "need",
+      "start": 73.88,
+      "end": 74.0,
+      "prob": 0.999
+    },
+    {
+      "word": "a",
+      "start": 74.0,
+      "end": 74.12,
+      "prob": 0.999
+    },
+    {
+      "word": "laptop.",
+      "start": 74.12,
+      "end": 74.5,
+      "prob": 0.999
+    },
+    {
+      "word": "You",
+      "start": 74.74,
+      "end": 74.78,
+      "prob": 0.998
+    },
+    {
+      "word": "need",
+      "start": 74.78,
+      "end": 74.9,
+      "prob": 0.999
+    },
+    {
+      "word": "a",
+      "start": 74.9,
+      "end": 75.04,
+      "prob": 0.974
+    },
+    {
+      "word": "monitor",
+      "start": 75.04,
+      "end": 75.42,
+      "prob": 0.999
+    },
+    {
+      "word": "plus",
+      "start": 75.42,
+      "end": 75.76,
+      "prob": 0.858
+    },
+    {
+      "word": "this",
+      "start": 75.76,
+      "end": 76.14,
+      "prob": 0.994
+    },
+    {
+      "word": "thing.",
+      "start": 76.14,
+      "end": 76.44,
+      "prob": 0.999
+    },
+    {
+      "word": "Okay,",
+      "start": 76.74,
+      "end": 76.78,
+      "prob": 0.938
+    },
+    {
+      "word": "downsides",
+      "start": 76.98,
+      "end": 77.26,
+      "prob": 0.943
+    },
+    {
+      "word": "exist.",
+      "start": 77.26,
+      "end": 77.56,
+      "prob": 0.949
+    },
+    {
+      "word": "1500",
+      "start": 77.88,
+      "end": 78.1,
+      "prob": 0.468
+    },
+    {
+      "word": "bucks,",
+      "start": 78.1,
+      "end": 78.54,
+      "prob": 0.997
+    },
+    {
+      "word": "that's",
+      "start": 78.72,
+      "end": 78.92,
+      "prob": 0.993
+    },
+    {
+      "word": "a",
+      "start": 78.92,
+      "end": 79.0,
+      "prob": 0.999
+    },
+    {
+      "word": "lot.",
+      "start": 79.0,
+      "end": 79.26,
+      "prob": 0.999
+    },
+    {
+      "word": "Useless",
+      "start": 79.44,
+      "end": 79.6,
+      "prob": 0.982
+    },
+    {
+      "word": "without",
+      "start": 79.6,
+      "end": 79.86,
+      "prob": 0.985
+    },
+    {
+      "word": "a",
+      "start": 79.86,
+      "end": 79.98,
+      "prob": 0.998
+    },
+    {
+      "word": "monitor,",
+      "start": 79.98,
+      "end": 80.3,
+      "prob": 0.999
+    },
+    {
+      "word": "there's",
+      "start": 80.44,
+      "end": 80.62,
+      "prob": 0.995
+    },
+    {
+      "word": "no",
+      "start": 80.62,
+      "end": 80.78,
+      "prob": 0.999
+    },
+    {
+      "word": "screen.",
+      "start": 80.78,
+      "end": 81.2,
+      "prob": 0.999
+    },
+    {
+      "word": "Gamers",
+      "start": 81.94,
+      "end": 82.24,
+      "prob": 0.985
+    },
+    {
+      "word": "sit",
+      "start": 82.24,
+      "end": 82.52,
+      "prob": 0.793
+    },
+    {
+      "word": "this",
+      "start": 82.52,
+      "end": 82.7,
+      "prob": 0.997
+    },
+    {
+      "word": "one",
+      "start": 82.7,
+      "end": 82.88,
+      "prob": 0.997
+    },
+    {
+      "word": "out,",
+      "start": 82.88,
+      "end": 83.14,
+      "prob": 0.999
+    },
+    {
+      "word": "it's",
+      "start": 83.26,
+      "end": 83.44,
+      "prob": 0.991
+    },
+    {
+      "word": "not",
+      "start": 83.44,
+      "end": 83.62,
+      "prob": 0.999
+    },
+    {
+      "word": "for",
+      "start": 83.62,
+      "end": 83.82,
+      "prob": 0.997
+    },
+    {
+      "word": "gaming.",
+      "start": 83.82,
+      "end": 84.02,
+      "prob": 0.999
+    },
+    {
+      "word": "And",
+      "start": 84.24,
+      "end": 84.32,
+      "prob": 0.992
+    },
+    {
+      "word": "if",
+      "start": 84.32,
+      "end": 84.42,
+      "prob": 0.996
+    },
+    {
+      "word": "you",
+      "start": 84.42,
+      "end": 84.52,
+      "prob": 0.999
+    },
+    {
+      "word": "work",
+      "start": 84.52,
+      "end": 84.66,
+      "prob": 0.994
+    },
+    {
+      "word": "from",
+      "start": 84.66,
+      "end": 84.86,
+      "prob": 0.994
+    },
+    {
+      "word": "cafes",
+      "start": 84.86,
+      "end": 85.2,
+      "prob": 0.963
+    },
+    {
+      "word": "on",
+      "start": 85.2,
+      "end": 85.38,
+      "prob": 0.991
+    },
+    {
+      "word": "a",
+      "start": 85.38,
+      "end": 85.5,
+      "prob": 0.998
+    },
+    {
+      "word": "laptop,",
+      "start": 85.5,
+      "end": 85.88,
+      "prob": 0.999
+    },
+    {
+      "word": "this",
+      "start": 86.22,
+      "end": 86.4,
+      "prob": 0.998
+    },
+    {
+      "word": "isn't",
+      "start": 86.4,
+      "end": 86.62,
+      "prob": 0.999
+    },
+    {
+      "word": "for",
+      "start": 86.62,
+      "end": 86.78,
+      "prob": 0.999
+    },
+    {
+      "word": "you.",
+      "start": 86.78,
+      "end": 86.9,
+      "prob": 0.999
+    },
+    {
+      "word": "But",
+      "start": 86.9,
+      "end": 87.02,
+      "prob": 0.555
+    },
+    {
+      "word": "if",
+      "start": 87.02,
+      "end": 87.12,
+      "prob": 0.966
+    },
+    {
+      "word": "you",
+      "start": 87.12,
+      "end": 87.26,
+      "prob": 0.998
+    },
+    {
+      "word": "work",
+      "start": 87.26,
+      "end": 87.46,
+      "prob": 0.997
+    },
+    {
+      "word": "between",
+      "start": 87.46,
+      "end": 87.72,
+      "prob": 0.994
+    },
+    {
+      "word": "the",
+      "start": 87.72,
+      "end": 87.88,
+      "prob": 0.992
+    },
+    {
+      "word": "office",
+      "start": 87.88,
+      "end": 88.16,
+      "prob": 0.995
+    },
+    {
+      "word": "and",
+      "start": 88.16,
+      "end": 88.4,
+      "prob": 0.907
+    },
+    {
+      "word": "home",
+      "start": 88.4,
+      "end": 88.64,
+      "prob": 0.992
+    },
+    {
+      "word": "or",
+      "start": 88.64,
+      "end": 88.84,
+      "prob": 0.605
+    },
+    {
+      "word": "travel",
+      "start": 88.84,
+      "end": 89.18,
+      "prob": 0.999
+    },
+    {
+      "word": "a",
+      "start": 89.18,
+      "end": 89.32,
+      "prob": 0.997
+    },
+    {
+      "word": "lot",
+      "start": 89.32,
+      "end": 89.52,
+      "prob": 1.0
+    },
+    {
+      "word": "or",
+      "start": 89.52,
+      "end": 89.64,
+      "prob": 0.913
+    },
+    {
+      "word": "do",
+      "start": 89.64,
+      "end": 89.8,
+      "prob": 0.998
+    },
+    {
+      "word": "hot",
+      "start": 89.8,
+      "end": 90.04,
+      "prob": 0.994
+    },
+    {
+      "word": "desking,",
+      "start": 90.04,
+      "end": 90.52,
+      "prob": 0.854
+    },
+    {
+      "word": "this",
+      "start": 90.96,
+      "end": 91.26,
+      "prob": 0.977
+    },
+    {
+      "word": "is",
+      "start": 91.26,
+      "end": 91.9,
+      "prob": 0.992
+    },
+    {
+      "word": "a",
+      "start": 91.9,
+      "end": 92.04,
+      "prob": 0.995
+    },
+    {
+      "word": "game",
+      "start": 92.04,
+      "end": 92.24,
+      "prob": 0.996
+    },
+    {
+      "word": "changer.",
+      "start": 92.24,
+      "end": 92.84,
+      "prob": 0.954
+    },
+    {
+      "word": "Seriously,",
+      "start": 93.7,
+      "end": 93.94,
+      "prob": 0.987
+    },
+    {
+      "word": "if",
+      "start": 94.34,
+      "end": 94.5,
+      "prob": 0.993
+    },
+    {
+      "word": "this",
+      "start": 94.5,
+      "end": 94.72,
+      "prob": 0.999
+    },
+    {
+      "word": "kind",
+      "start": 94.72,
+      "end": 94.88,
+      "prob": 0.831
+    },
+    {
+      "word": "of",
+      "start": 94.88,
+      "end": 94.98,
+      "prob": 0.999
+    },
+    {
+      "word": "stuff",
+      "start": 94.98,
+      "end": 95.16,
+      "prob": 0.999
+    },
+    {
+      "word": "at",
+      "start": 95.16,
+      "end": 95.36,
+      "prob": 0.983
+    },
+    {
+      "word": "the",
+      "start": 95.36,
+      "end": 95.48,
+      "prob": 0.999
+    },
+    {
+      "word": "edge",
+      "start": 95.48,
+      "end": 95.76,
+      "prob": 0.998
+    },
+    {
+      "word": "of",
+      "start": 95.76,
+      "end": 95.94,
+      "prob": 0.999
+    },
+    {
+      "word": "hardware",
+      "start": 95.94,
+      "end": 96.32,
+      "prob": 0.997
+    },
+    {
+      "word": "and",
+      "start": 96.32,
+      "end": 96.56,
+      "prob": 0.996
+    },
+    {
+      "word": "AI",
+      "start": 96.56,
+      "end": 96.84,
+      "prob": 0.981
+    },
+    {
+      "word": "is",
+      "start": 96.84,
+      "end": 97.14,
+      "prob": 0.996
+    },
+    {
+      "word": "your",
+      "start": 97.14,
+      "end": 97.3,
+      "prob": 0.997
+    },
+    {
+      "word": "thing,",
+      "start": 97.3,
+      "end": 97.62,
+      "prob": 0.999
+    },
+    {
+      "word": "subscribe,",
+      "start": 98.1,
+      "end": 98.5,
+      "prob": 0.982
+    },
+    {
+      "word": "I'm",
+      "start": 98.7,
+      "end": 98.92,
+      "prob": 0.998
+    },
+    {
+      "word": "watching",
+      "start": 98.92,
+      "end": 99.22,
+      "prob": 0.999
+    },
+    {
+      "word": "this",
+      "start": 99.22,
+      "end": 99.46,
+      "prob": 0.981
+    },
+    {
+      "word": "space",
+      "start": 99.46,
+      "end": 99.82,
+      "prob": 0.994
+    },
+    {
+      "word": "closely.",
+      "start": 99.82,
+      "end": 100.52,
+      "prob": 0.995
+    },
+    {
+      "word": "Bro,",
+      "start": 100.68,
+      "end": 100.78,
+      "prob": 0.993
+    },
+    {
+      "word": "take",
+      "start": 100.88,
+      "end": 101.02,
+      "prob": 0.999
+    },
+    {
+      "word": "care.",
+      "start": 101.02,
+      "end": 101.24,
+      "prob": 0.999
+    },
+    {
+      "word": "Catch",
+      "start": 101.44,
+      "end": 101.52,
+      "prob": 0.992
+    },
+    {
+      "word": "you",
+      "start": 101.52,
+      "end": 101.66,
+      "prob": 0.895
+    },
+    {
+      "word": "later.",
+      "start": 101.66,
+      "end": 101.78,
+      "prob": 0.999
+    }
+  ]
+}

@@ -2,7 +2,6 @@
 
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { Cpu } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -37,26 +36,50 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-zinc-950">
-      {/* Noise background */}
-      <div className="absolute inset-0 noise-bg opacity-[0.03] pointer-events-none" />
-      <div className="absolute inset-0 scanlines opacity-30 pointer-events-none" />
+    <div className="relative min-h-screen flex items-center justify-center" style={{ background: '#0a0a0a' }}>
+      {/* Content — above noise overlay */}
+      <div className="relative z-[1] w-full max-w-lg px-6 text-center">
+        {/* Eyebrow */}
+        <span style={{
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: '10px',
+          letterSpacing: '0.20em',
+          textTransform: 'uppercase',
+          color: 'rgba(245,230,211,0.3)',
+          display: 'block',
+          marginBottom: '32px',
+        }}>
+          The Studio
+        </span>
 
-      <div className="relative z-10 w-full max-w-sm px-4">
-        {/* Logo */}
-        <div className="flex flex-col items-center mb-8">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center mb-4">
-            <Cpu className="w-7 h-7 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold gradient-text">Content Matrix AI</h1>
-        </div>
+        {/* Title */}
+        <h1 style={{
+          fontFamily: "'DM Serif Display', serif",
+          fontStyle: 'italic',
+          fontSize: '64px',
+          lineHeight: 0.95,
+          letterSpacing: '-0.03em',
+          color: '#f5e6d3',
+          marginBottom: '16px',
+        }}>
+          Welcome to the <em style={{ color: '#ff3344', fontStyle: 'italic' }}>studio</em>.
+        </h1>
 
-        {/* Card */}
-        <form onSubmit={handleSubmit} className="glass-card p-6 space-y-5">
-          <div>
-            <label htmlFor="username" className="block text-sm text-zinc-400 mb-1.5">
-              Username
-            </label>
+        {/* Sub */}
+        <p style={{
+          fontFamily: "'Fraunces', serif",
+          fontSize: '16px',
+          fontStyle: 'italic',
+          color: 'rgba(245,230,211,0.45)',
+          marginBottom: '48px',
+        }}>
+          Sign in to direct what hasn&apos;t yet been imagined.
+        </p>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="text-left max-w-sm mx-auto">
+          <div className="mb-6">
+            <label htmlFor="username" className="section-label block mb-2">Operator Handle</label>
             <input
               id="username"
               type="text"
@@ -64,15 +87,14 @@ export default function LoginPage() {
               onChange={(e) => setUsername(e.target.value)}
               autoComplete="username"
               required
-              className="w-full px-3 py-2 rounded-lg bg-zinc-900/80 border border-zinc-700/50 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/25 transition-colors"
+              className="input-inline w-full"
+              style={{ fontSize: '15px', padding: '12px 0' }}
               placeholder="admin"
             />
           </div>
 
-          <div>
-            <label htmlFor="password" className="block text-sm text-zinc-400 mb-1.5">
-              Password
-            </label>
+          <div className="mb-8">
+            <label htmlFor="password" className="section-label block mb-2">Master Key</label>
             <input
               id="password"
               type="password"
@@ -80,13 +102,14 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
               required
-              className="w-full px-3 py-2 rounded-lg bg-zinc-900/80 border border-zinc-700/50 text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/25 transition-colors"
+              className="input-inline w-full"
+              style={{ fontSize: '15px', padding: '12px 0' }}
               placeholder="••••••••"
             />
           </div>
 
           {error && (
-            <div className="text-red-400 text-sm text-center bg-red-500/10 rounded-lg py-2">
+            <div className="reel-error-row mb-6">
               {error}
             </div>
           )}
@@ -94,12 +117,21 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 rounded-lg bg-gradient-to-r from-purple-500 to-cyan-500 text-white font-medium text-sm hover:from-purple-600 hover:to-cyan-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary w-full disabled:opacity-40 disabled:cursor-not-allowed"
+            style={{ fontSize: '18px', padding: '16px 32px', justifyContent: 'center' }}
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? 'Signing in\u2026' : <>Take the <em>first</em> take &rarr;</>}
           </button>
         </form>
       </div>
+
+      {/* Corner badge */}
+      <span
+        className="badge absolute bottom-6 right-6 z-[1]"
+        style={{ color: 'rgba(245,230,211,0.2)', borderColor: 'rgba(245,230,211,0.1)' }}
+      >
+        Runtime &middot; Private &middot; v3
+      </span>
     </div>
   );
 }

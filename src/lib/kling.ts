@@ -2,8 +2,38 @@
  * Kling AI API client
  * Docs: https://api.klingai.com/v1
  */
+import { readFileSync, existsSync } from 'fs';
+import path from 'path';
 
 const KLING_API = 'https://api.klingai.com/v1';
+
+/**
+ * Kling expects either a public URL or **pure** base64 (no data: prefix).
+ * Convert local /generations/... paths and localhost URLs to base64.
+ * Public https URLs pass through unchanged.
+ */
+async function toKlingImageInput(input: string): Promise<string> {
+  // data:image/...;base64,... → strip prefix
+  if (input.startsWith('data:')) {
+    const m = input.match(/^data:.+;base64,(.+)$/);
+    if (m) return m[1];
+    return input;
+  }
+  // public https/http (non-localhost) — pass through
+  const isLocalhost = /^https?:\/\/(?:localhost|127\.0\.0\.1)/i.test(input);
+  if ((input.startsWith('https://') || input.startsWith('http://')) && !isLocalhost) {
+    return input;
+  }
+  // Local public path or localhost URL — read file, base64-encode
+  let absPath = input;
+  const localhostMatch = input.match(/^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?(\/.*)$/);
+  if (localhostMatch) absPath = localhostMatch[1];
+  if (absPath.startsWith('/')) {
+    absPath = path.join(process.cwd(), 'public', absPath.replace(/^\//, ''));
+  }
+  if (!existsSync(absPath)) throw new Error(`Kling image not found: ${absPath}`);
+  return readFileSync(absPath).toString('base64');
+}
 
 /** Generate JWT token for Kling AI API (HS256) */
 async function generateKlingToken(): Promise<string> {
@@ -86,8 +116,8 @@ export async function submitKlingImageToVideo(params: {
     mode = 'std',
   } = params;
 
-  // Kling accepts either a URL or base64 data URI
-  const isBase64 = imageUrl.startsWith('data:');
+  // Kling accepts either a public URL or pure base64 (NOT data URI). Local /generations/...
+  // paths or localhost URLs must be encoded to base64 before submit.
   const body: Record<string, unknown> = {
     model_name: modelName,
     mode,
@@ -95,13 +125,9 @@ export async function submitKlingImageToVideo(params: {
     prompt: animationPrompt,
     cfg_scale: 0.5,
   };
-  if (isBase64) {
-    body.image = imageUrl; // data:image/jpeg;base64,...
-  } else {
-    body.image = imageUrl;
-  }
+  body.image = await toKlingImageInput(imageUrl);
   if (tailImage) {
-    body.tail_image = tailImage;
+    body.tail_image = await toKlingImageInput(tailImage);
   }
 
   const res = await klingFetch('/videos/image2video', {

@@ -1,0 +1,94 @@
+{
+  "voices": [
+    {
+      "id": "mark",
+      "label": "Mark",
+      "description": "Mark - Natural Conversations · casual young-adult",
+      "voiceId": "UgBBYS2sOqTuMpoF3BR0",
+      "gender": "M",
+      "category": "Conversational",
+      "language": "en"
+    },
+    {
+      "id": "sean",
+      "label": "Sean",
+      "description": "Sean - Expressive and Conversational",
+      "voiceId": "DwwuoY7Uz8AP8zrY5TAo",
+      "gender": "M",
+      "category": "Conversational",
+      "language": "en"
+    },
+    {
+      "id": "alexandra",
+      "label": "Alexandra",
+      "description": "Alexandra - Conversational and Natural",
+      "voiceId": "kdmDKE6EkgrWrrykO9Qt",
+      "gender": "F",
+      "category": "Conversational",
+      "language": "en"
+    },
+    {
+      "id": "viraj",
+      "label": "Viraj",
+      "description": "Viraj - Bold & Commanding Banking",
+      "voiceId": "Ock0AL5DBkvTUDePt4Hm",
+      "gender": "M",
+      "category": "Professional",
+      "language": "en"
+    },
+    {
+      "id": "lauren",
+      "label": "Lauren",
+      "description": "Lauren - Empathetic and Encouraging · warm",
+      "voiceId": "l4Coq6695JDX9xtLqXDE",
+      "gender": "F",
+      "category": "Warm",
+      "language": "en"
+    },
+    {
+      "id": "ivanna",
+      "label": "Ivanna",
+      "description": "Ivanna - Young, Versatile and Casual",
+      "voiceId": "yM93hbw8Qtvdma2wCnJG",
+      "gender": "F",
+      "category": "Casual",
+      "language": "en"
+    },
+    {
+      "id": "eve",
+      "label": "Eve",
+      "description": "Eve - Authentic, Energetic and Happy",
+      "voiceId": "BZgkqPqms7Kj9ulSkVzn",
+      "gender": "F",
+      "category": "Energetic",
+      "language": "en"
+    },
+    {
+      "id": "tripti",
+      "label": "Tripti",
+      "description": "Tripti - Calm and Experienced · customer care",
+      "voiceId": "MwUMLXurEzSN7bIfIdXF",
+      "gender": "F",
+      "category": "Professional",
+      "language": "en"
+    },
+    {
+      "id": "adam_m",
+      "label": "Adam M",
+      "description": "Adam M - Middle-aged male voice",
+      "voiceId": "inGcvmoPgbvKUk9uCvHu",
+      "gender": "M",
+      "category": "Conversational",
+      "language": "en"
+    },
+    {
+      "id": "joseph",
+      "label": "Joseph",
+      "description": "Joseph - Customer Support Agent",
+      "voiceId": "8fcyCHOzlKDlxh1InJSf",
+      "gender": "M",
+      "category": "Professional",
+      "language": "en"
+    }
+  ]
+}

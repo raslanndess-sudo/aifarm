@@ -16,16 +16,10 @@ interface ScheduleItem {
   device_name?: string;
 }
 
-const PLATFORM_BADGE: Record<string, string> = {
-  TikTok: 'bg-cyan-500/10 border-cyan-500/20 text-cyan-400',
-  Reels:  'bg-purple-500/10 border-purple-500/20 text-purple-400',
-  Shorts: 'bg-red-500/10 border-red-500/20 text-red-400',
-};
-
-const STATUS_CONFIG: Record<ScheduleItem['status'], { icon: React.FC<{ className?: string }>; color: string; label: string; dotBg: string }> = {
-  pending: { icon: Clock,       color: 'text-yellow-400', label: 'Pending', dotBg: 'bg-yellow-500/20' },
-  posted:  { icon: CheckCircle, color: 'text-green-400',  label: 'Posted',  dotBg: 'bg-green-500/20' },
-  failed:  { icon: XCircle,     color: 'text-red-400',    label: 'Failed',  dotBg: 'bg-red-500/20' },
+const STATUS_CONFIG: Record<ScheduleItem['status'], { icon: React.FC<{ className?: string; style?: React.CSSProperties }>; color: string; label: string }> = {
+  pending: { icon: Clock,       color: '#c9a86a', label: 'Pending' },
+  posted:  { icon: CheckCircle, color: '#88a584', label: 'Posted' },
+  failed:  { icon: XCircle,     color: '#ff3344', label: 'Failed' },
 };
 
 function formatTime(iso: string): string {
@@ -36,6 +30,11 @@ function formatTime(iso: string): string {
 function formatDate(iso: string): string {
   const d = new Date(iso);
   return d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+}
+
+function isWithinHour(iso: string): boolean {
+  const diff = new Date(iso).getTime() - Date.now();
+  return diff > 0 && diff < 3600_000;
 }
 
 function groupByDate(posts: ScheduleItem[]): Map<string, ScheduleItem[]> {
@@ -53,6 +52,7 @@ export default function Scheduler() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [tab, setTab] = useState<'all' | 'pending' | 'posted' | 'failed'>('all');
 
   const fetchSchedule = useCallback(async () => {
     setLoading(true);
@@ -69,9 +69,7 @@ export default function Scheduler() {
     }
   }, []);
 
-  useEffect(() => {
-    void fetchSchedule();
-  }, [fetchSchedule]);
+  useEffect(() => { void fetchSchedule(); }, [fetchSchedule]);
 
   const handleProcess = async () => {
     setProcessing(true);
@@ -86,125 +84,141 @@ export default function Scheduler() {
   if (loading) return <NoSignal isLoading />;
   if (error) return <NoSignal title="No Signal" message="Failed to load schedule" onRetry={fetchSchedule} />;
 
-  const grouped = groupByDate(schedule);
+  const filtered = tab === 'all' ? schedule : schedule.filter(p => p.status === tab);
+  const grouped = groupByDate(filtered);
   const pending = schedule.filter(p => p.status === 'pending').length;
   const posted  = schedule.filter(p => p.status === 'posted').length;
   const failed  = schedule.filter(p => p.status === 'failed').length;
 
   return (
-    <div className="space-y-6">
-      {/* Stats */}
-      <div className="grid grid-cols-4 gap-4">
+    <div>
+      {/* Header */}
+      <div className="mb-10">
+        <span className="section-label block mb-3">Schedule &middot; Timeline</span>
+        <h1 style={{ fontFamily: "'DM Serif Display', serif", fontStyle: 'italic', fontSize: '48px', lineHeight: 0.95, letterSpacing: '-0.03em', color: '#f5e6d3' }}>
+          The <em style={{ color: '#ff3344', fontStyle: 'italic' }}>call sheet</em>.
+        </h1>
+      </div>
+
+      {/* Stats row */}
+      <div className="grid grid-cols-4 gap-4 mb-8">
         {[
-          { label: 'Total Scheduled', value: schedule.length, gradient: 'from-purple-500 to-cyan-500', icon: CalendarDays, iconBg: 'bg-purple-500/10', iconColor: 'text-purple-400' },
-          { label: 'Pending',  value: pending, gradient: 'from-yellow-500 to-amber-500', icon: Clock,       iconBg: 'bg-yellow-500/10', iconColor: 'text-yellow-400' },
-          { label: 'Posted',   value: posted,  gradient: 'from-green-500 to-emerald-500', icon: CheckCircle, iconBg: 'bg-green-500/10',  iconColor: 'text-green-400' },
-          { label: 'Failed',   value: failed,  gradient: 'from-red-500 to-red-400', icon: XCircle,     iconBg: 'bg-red-500/10',    iconColor: 'text-red-400' },
+          { label: 'Total', value: schedule.length, icon: CalendarDays },
+          { label: 'Pending', value: pending, icon: Clock },
+          { label: 'Posted', value: posted, icon: CheckCircle },
+          { label: 'Failed', value: failed, icon: XCircle },
         ].map(s => (
-          <div key={s.label} className="glass-card p-5 group">
-            <div className="flex items-center justify-between mb-3">
-              <span className="section-label">{s.label}</span>
-              <div className={`w-9 h-9 rounded-xl ${s.iconBg} flex items-center justify-center transition-transform duration-200 group-hover:scale-110`}>
-                <s.icon className={`w-4 h-4 ${s.iconColor}`} />
-              </div>
-            </div>
-            <div className={`text-2xl font-bold tabular-nums bg-gradient-to-r ${s.gradient} bg-clip-text text-transparent`}>
-              {s.value}
+          <div key={s.label} className="glass-card p-6">
+            <span className="section-label block mb-2">{s.label}</span>
+            <div className="flex items-center justify-between">
+              <span style={{ fontFamily: "'DM Serif Display', serif", fontStyle: 'italic', fontSize: '38px', color: '#f5e6d3' }} className="tabular-nums">
+                {s.value}
+              </span>
+              <s.icon className="w-5 h-5" style={{ color: 'rgba(245,230,211,0.18)' }} />
             </div>
           </div>
         ))}
       </div>
 
-      {/* Timeline */}
-      <div className="glass-card p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-purple-500/10 flex items-center justify-center">
-              <CalendarDays className="w-3.5 h-3.5 text-purple-400" />
-            </div>
-            <div>
-              <h2 className="text-sm font-semibold text-text-primary">Post Timeline</h2>
-              <p className="text-[11px] text-text-muted">Scheduled and posted content</p>
-            </div>
-          </div>
-          <button
-            onClick={handleProcess}
-            disabled={processing || pending === 0}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl btn-primary text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            <Play className="w-3 h-3" />
-            {processing ? 'Processing...' : 'Process Queue'}
-          </button>
+      {/* Tab chips + Process button */}
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex gap-2">
+          {(['all', 'pending', 'posted', 'failed'] as const).map(t => (
+            <button key={t} onClick={() => setTab(t)} className={`reel-chip ${tab === t ? 'active' : ''}`}>
+              {t === 'all' ? 'All' : t.charAt(0).toUpperCase() + t.slice(1)}
+            </button>
+          ))}
         </div>
-
-        <div className="space-y-8">
-          {Array.from(grouped.entries())
-            .sort(([a], [b]) => a.localeCompare(b))
-            .map(([dateKey, posts]) => (
-              <div key={dateKey}>
-                {/* Date header */}
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="h-px flex-1 bg-border-subtle" />
-                  <span className="text-[11px] font-semibold text-text-tertiary px-3 py-1 rounded-lg bg-white/[0.04] border border-border-subtle">
-                    {formatDate(posts[0].scheduled_at)}
-                  </span>
-                  <div className="h-px flex-1 bg-border-subtle" />
-                </div>
-
-                {/* Posts for this day */}
-                <div className="space-y-2.5 relative">
-                  {/* Vertical line */}
-                  <div className="absolute left-[18px] top-2 bottom-2 w-px bg-border-subtle" />
-
-                  {posts
-                    .sort((a, b) => a.scheduled_at.localeCompare(b.scheduled_at))
-                    .map(post => {
-                      const { icon: StatusIcon, color: statusColor, label: statusLabel, dotBg } = STATUS_CONFIG[post.status];
-                      const platformClass = PLATFORM_BADGE[post.platform] ?? 'bg-zinc-500/10 border-zinc-500/20 text-zinc-400';
-                      return (
-                        <div key={post.id} className="flex gap-4 items-start pl-1">
-                          {/* Dot */}
-                          <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 z-10 ${dotBg}`}>
-                            <StatusIcon className={`w-4 h-4 ${statusColor}`} />
-                          </div>
-
-                          {/* Content */}
-                          <div className="flex-1 flex items-center gap-4 p-4 rounded-xl bg-white/[0.02] border border-border-subtle hover:bg-white/[0.03] hover:border-border-hover transition-all">
-                            {/* Time */}
-                            <div className="text-sm font-medium text-text-secondary w-14 shrink-0 tabular-nums">
-                              {formatTime(post.scheduled_at)}
-                            </div>
-
-                            {/* Title */}
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm text-text-primary truncate">{post.video_title ?? 'Untitled'}</p>
-                              <p className="text-[11px] text-text-muted">{post.account}{post.device_name ? ` · ${post.device_name}` : ''}</p>
-                            </div>
-
-                            {/* Platform badge */}
-                            <span className={`badge shrink-0 ${platformClass}`}>
-                              {post.platform}
-                            </span>
-
-                            {/* Status */}
-                            <span className={`text-[11px] font-medium shrink-0 ${statusColor}`}>{statusLabel}</span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                </div>
-              </div>
-            ))}
-        </div>
-
-        {schedule.length === 0 && (
-          <div className="text-center py-12">
-            <Send className="w-8 h-8 text-text-muted mx-auto mb-3" />
-            <p className="text-text-muted text-sm">No scheduled posts</p>
-            <p className="text-text-muted text-xs mt-1">Posts will appear here when you schedule them</p>
-          </div>
-        )}
+        <button
+          onClick={handleProcess}
+          disabled={processing || pending === 0}
+          className="btn-primary disabled:opacity-40 disabled:cursor-not-allowed"
+          style={{ fontSize: '13px', padding: '10px 20px' }}
+        >
+          <Play className="w-3.5 h-3.5" />
+          {processing ? 'Processing...' : 'Process Queue'}
+        </button>
       </div>
+
+      {/* Timeline — screenplay log style */}
+      <div>
+        {Array.from(grouped.entries())
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([dateKey, posts]) => (
+            <div key={dateKey} className="mb-8">
+              {/* Date header */}
+              <div className="flex items-center gap-4 mb-4">
+                <div className="h-px flex-1" style={{ background: 'rgba(245,230,211,0.08)' }} />
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', letterSpacing: '0.20em', textTransform: 'uppercase', color: 'rgba(245,230,211,0.3)' }}>
+                  {formatDate(posts[0].scheduled_at)}
+                </span>
+                <div className="h-px flex-1" style={{ background: 'rgba(245,230,211,0.08)' }} />
+              </div>
+
+              {/* Rows */}
+              {posts
+                .sort((a, b) => a.scheduled_at.localeCompare(b.scheduled_at))
+                .map(post => {
+                  const { icon: StatusIcon, color: statusColor, label: statusLabel } = STATUS_CONFIG[post.status];
+                  const urgent = post.status === 'pending' && isWithinHour(post.scheduled_at);
+                  return (
+                    <div
+                      key={post.id}
+                      className="flex items-center gap-5 px-5 py-4 transition-colors duration-200"
+                      style={{ borderBottom: '1px solid rgba(245,230,211,0.08)' }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(245,230,211,0.025)'; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                    >
+                      {/* Timestamp */}
+                      <span className="tabular-nums shrink-0 w-16" style={{
+                        fontFamily: "'JetBrains Mono', monospace",
+                        fontSize: '11px',
+                        letterSpacing: '0.15em',
+                        textTransform: 'uppercase',
+                        color: urgent ? '#ff3344' : 'rgba(245,230,211,0.45)',
+                      }}>
+                        {formatTime(post.scheduled_at)}
+                      </span>
+
+                      {/* Title */}
+                      <div className="flex-1 min-w-0">
+                        <span className="truncate block" style={{ fontFamily: "'Fraunces', serif", fontSize: '15px', color: '#f5e6d3' }}>
+                          {post.video_title ?? 'Untitled'}
+                        </span>
+                        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: 'rgba(245,230,211,0.3)', letterSpacing: '0.1em' }}>
+                          {post.account}{post.device_name ? ` · ${post.device_name}` : ''}
+                        </span>
+                      </div>
+
+                      {/* Platform badge */}
+                      <span className="badge shrink-0">{post.platform}</span>
+
+                      {/* Status */}
+                      <div className="flex items-center gap-1.5 shrink-0" style={{ color: statusColor, width: '80px' }}>
+                        <StatusIcon className="w-3.5 h-3.5" style={{ color: statusColor }} />
+                        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                          {statusLabel}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          ))}
+      </div>
+
+      {/* Empty state */}
+      {filtered.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-20">
+          <Send className="w-12 h-12 mb-4" style={{ color: 'rgba(245,230,211,0.12)' }} />
+          <h3 style={{ fontFamily: "'DM Serif Display', serif", fontStyle: 'italic', fontSize: '24px', color: 'rgba(245,230,211,0.45)', marginBottom: '8px' }}>
+            No reels scheduled. <em style={{ color: '#ff3344', fontStyle: 'italic' }}>Take</em> a frame.
+          </h3>
+          <p style={{ fontFamily: "'Fraunces', serif", fontSize: '14px', color: 'rgba(245,230,211,0.3)' }}>
+            Posts will appear here when you schedule them.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

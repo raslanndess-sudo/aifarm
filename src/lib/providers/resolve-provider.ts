@@ -4,10 +4,12 @@ import { getProvider, type ProviderMode } from './index';
 import type { VideoProvider } from './types';
 
 export async function resolveProvider(): Promise<{ provider: VideoProvider; mode: ProviderMode }> {
-  // Проверяем сессию — admin ли пользователь
+  // Any authenticated session counts as admin: login issues a crypto UUID
+  // token, and this app has a single hardcoded admin/admin account — so
+  // "is there a session cookie at all" is equivalent to "is admin".
   const cookieStore = await cookies();
   const session = cookieStore.get('session')?.value;
-  const isAdmin = session === 'admin';
+  const isAdmin = !!session;
 
   if (!isAdmin) {
     return { provider: getProvider('api'), mode: 'api' };

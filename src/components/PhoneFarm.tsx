@@ -1,43 +1,30 @@
 'use client';
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Smartphone, Wifi, AlertCircle, Loader2, Battery, Plus, Trash2, Send, Zap } from 'lucide-react';
+import { Smartphone, AlertCircle, Loader2, Battery, Plus, Trash2, Send, Zap } from 'lucide-react';
 import type { Device } from '@/lib/types';
 import NoSignal from '@/components/NoSignal';
 
 type Status = Device['status'];
 type Platform = Device['platform'];
 
-const STATUS_CONFIG: Record<Status, { label: string; dotClass: string; textColor: string; glowClass: string }> = {
-  idle:     { label: 'Idle',     dotClass: 'bg-zinc-500',   textColor: 'text-text-muted',     glowClass: '' },
-  posting:  { label: 'Posting',  dotClass: 'bg-green-400',  textColor: 'text-green-400',  glowClass: 'pulse-glow-green' },
-  cooldown: { label: 'Cooldown', dotClass: 'bg-yellow-400', textColor: 'text-yellow-400', glowClass: 'pulse-glow-yellow' },
-  error:    { label: 'Error',    dotClass: 'bg-red-400',    textColor: 'text-red-400',    glowClass: 'pulse-glow-red' },
-};
-
-const PLATFORM_BADGE: Record<string, string> = {
-  TikTok: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
-  Reels:  'bg-purple-500/10 text-purple-400 border-purple-500/20',
-  Shorts: 'bg-red-500/10 text-red-400 border-red-500/20',
+const STATUS_LABEL: Record<Status, { label: string; color: string }> = {
+  idle:     { label: 'Idle',     color: 'rgba(245,230,211,0.45)' },
+  posting:  { label: 'Posting',  color: '#88a584' },
+  cooldown: { label: 'Cooldown', color: '#c9a86a' },
+  error:    { label: 'Error',    color: '#ff3344' },
 };
 
 const PLATFORMS: Platform[] = ['TikTok', 'Reels', 'Shorts'];
 
 function BatteryBar({ level }: { level: number }) {
-  const color = level > 50
-    ? 'from-green-500 to-emerald-400'
-    : level > 20
-      ? 'from-yellow-500 to-amber-400'
-      : 'from-red-500 to-red-400';
+  const color = level > 50 ? '#88a584' : level > 20 ? '#c9a86a' : '#ff3344';
   return (
     <div className="flex items-center gap-2">
-      <Battery className={`w-3.5 h-3.5 ${level > 50 ? 'text-green-500' : level > 20 ? 'text-yellow-500' : 'text-red-500'}`} />
-      <div className="flex-1 h-1.5 bg-white/[0.04] rounded-full overflow-hidden">
-        <div
-          className={`h-full rounded-full bg-gradient-to-r ${color} transition-all duration-500`}
-          style={{ width: `${level}%` }}
-        />
+      <Battery className="w-3.5 h-3.5" style={{ color }} />
+      <div className="flex-1 h-1" style={{ background: 'rgba(245,230,211,0.04)' }}>
+        <div className="h-full transition-all duration-500" style={{ width: `${level}%`, background: color }} />
       </div>
-      <span className="text-[10px] text-text-muted w-7 text-right tabular-nums">{level}%</span>
+      <span className="tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: 'rgba(245,230,211,0.3)', width: '28px', textAlign: 'right' }}>{level}%</span>
     </div>
   );
 }
@@ -69,47 +56,18 @@ function AddDeviceForm({ onAdd, onCancel }: { onAdd: (d: Device) => void; onCanc
   };
 
   return (
-    <form onSubmit={handleSubmit} className="glass-card p-5 space-y-3">
-      <div className="text-xs font-semibold text-text-primary">New Device</div>
-      <input
-        type="text"
-        placeholder="Device name"
-        value={name}
-        onChange={e => setName(e.target.value)}
-        required
-        className="w-full input-field px-3 py-2 text-xs"
-      />
-      <select
-        value={platform}
-        onChange={e => setPlatform(e.target.value as Platform)}
-        className="w-full input-field px-3 py-2 text-xs appearance-none cursor-pointer"
-      >
-        {PLATFORMS.map(p => (
-          <option key={p} value={p}>{p}</option>
-        ))}
+    <form onSubmit={handleSubmit} className="glass-card p-6">
+      <span className="section-label block mb-4">New Device</span>
+      <input type="text" placeholder="Device name" value={name} onChange={e => setName(e.target.value)} required className="input-field w-full mb-3" style={{ padding: '10px 16px', fontSize: '13px' }} />
+      <select value={platform} onChange={e => setPlatform(e.target.value as Platform)} className="input-inline w-full mb-3 cursor-pointer" style={{ padding: '8px 0', fontSize: '13px' }}>
+        {PLATFORMS.map(p => <option key={p} value={p}>{p}</option>)}
       </select>
-      <input
-        type="text"
-        placeholder="Account (optional)"
-        value={account}
-        onChange={e => setAccount(e.target.value)}
-        className="w-full input-field px-3 py-2 text-xs"
-      />
-      <div className="flex gap-2">
-        <button
-          type="submit"
-          disabled={submitting || !name.trim()}
-          className="flex-1 py-2 rounded-xl btn-primary text-xs font-medium"
-        >
+      <input type="text" placeholder="Account (optional)" value={account} onChange={e => setAccount(e.target.value)} className="input-field w-full mb-4" style={{ padding: '10px 16px', fontSize: '13px' }} />
+      <div className="flex gap-3">
+        <button type="submit" disabled={submitting || !name.trim()} className="btn-primary flex-1 disabled:opacity-40 disabled:cursor-not-allowed" style={{ fontSize: '13px', padding: '10px 20px' }}>
           {submitting ? 'Adding...' : 'Add Device'}
         </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          className="px-4 py-2 rounded-xl btn-ghost text-xs"
-        >
-          Cancel
-        </button>
+        <button type="button" onClick={onCancel} className="btn-ghost">Cancel</button>
       </div>
     </form>
   );
@@ -137,23 +95,15 @@ export default function PhoneFarm() {
     }
   }, []);
 
-  useEffect(() => {
-    void fetchDevices();
-  }, [fetchDevices]);
+  useEffect(() => { void fetchDevices(); }, [fetchDevices]);
 
   useEffect(() => {
     const timers = timersRef.current;
-    return () => {
-      timers.forEach(t => clearTimeout(t));
-      timers.clear();
-    };
+    return () => { timers.forEach(t => clearTimeout(t)); timers.clear(); };
   }, []);
 
   const addTimer = useCallback((fn: () => void, ms: number) => {
-    const id = setTimeout(() => {
-      timersRef.current.delete(id);
-      fn();
-    }, ms);
+    const id = setTimeout(() => { timersRef.current.delete(id); fn(); }, ms);
     timersRef.current.add(id);
     return id;
   }, []);
@@ -164,66 +114,31 @@ export default function PhoneFarm() {
 
   const handlePost = useCallback(async (device: Device) => {
     updateDevice(device.id, { status: 'posting' });
-    await fetch(`/api/devices/${device.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'posting' }),
-    });
+    await fetch(`/api/devices/${device.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'posting' }) });
 
     addTimer(async () => {
       const newPostsToday = device.posts_today + 1;
       const lastPost = new Date().toISOString();
       updateDevice(device.id, { status: 'cooldown', posts_today: newPostsToday, last_post: lastPost });
-      await fetch(`/api/devices/${device.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'cooldown', posts_today: newPostsToday, last_post: lastPost }),
-      });
-
+      await fetch(`/api/devices/${device.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'cooldown', posts_today: newPostsToday, last_post: lastPost }) });
       addTimer(async () => {
         updateDevice(device.id, { status: 'idle' });
-        await fetch(`/api/devices/${device.id}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status: 'idle' }),
-        });
+        await fetch(`/api/devices/${device.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: 'idle' }) });
       }, 30_000);
     }, 10_000);
 
-    await fetch('/api/billing/transactions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        description: `Post via ${device.name} to ${device.platform}`,
-        amount: 50,
-        type: 'debit',
-      }),
-    });
+    await fetch('/api/billing/transactions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ description: `Post via ${device.name} to ${device.platform}`, amount: 50, type: 'debit' }) });
 
     const today = new Date().toISOString().slice(0, 10);
     const randomViews = Math.floor(Math.random() * 5000) + 500;
-    await fetch('/api/analytics', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        date: today,
-        platform: device.platform,
-        views: randomViews,
-        followers: Math.floor(Math.random() * 50),
-        engagement: Math.round((Math.random() * 8 + 1) * 100) / 100,
-      }),
-    }).catch(() => {});
+    await fetch('/api/analytics', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ date: today, platform: device.platform, views: randomViews, followers: Math.floor(Math.random() * 50), engagement: Math.round((Math.random() * 8 + 1) * 100) / 100 }) }).catch(() => {});
 
     try {
       const vRes = await fetch('/api/videos?status=complete');
       const vData: { videos: { id: number }[] } = await vRes.json();
       if (vData.videos?.length > 0) {
         const pick = vData.videos[Math.floor(Math.random() * vData.videos.length)];
-        await fetch(`/api/videos/${pick.id}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ views: randomViews }),
-        });
+        await fetch(`/api/videos/${pick.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ views: randomViews }) });
       }
     } catch { /* non-critical */ }
   }, [updateDevice, addTimer]);
@@ -246,22 +161,30 @@ export default function PhoneFarm() {
   const postsToday = devices.reduce((a, d) => a + d.posts_today, 0);
 
   return (
-    <div className="space-y-6">
-      {/* Stats */}
-      <div className="grid grid-cols-4 gap-4">
+    <div>
+      {/* Header */}
+      <div className="mb-10">
+        <span className="section-label block mb-3">Operations &middot; Devices</span>
+        <h1 style={{ fontFamily: "'DM Serif Display', serif", fontStyle: 'italic', fontSize: '48px', lineHeight: 0.95, letterSpacing: '-0.03em', color: '#f5e6d3' }}>
+          Phone <em style={{ color: '#ff3344', fontStyle: 'italic' }}>farm</em>.
+        </h1>
+      </div>
+
+      {/* Metrics row */}
+      <div className="grid grid-cols-4 gap-4 mb-8">
         {[
-          { label: 'Total Devices', value: devices.length, icon: Smartphone, iconBg: 'bg-purple-500/10', iconColor: 'text-purple-400' },
-          { label: 'Active Now',    value: activeCount,     icon: Zap,       iconBg: 'bg-green-500/10',  iconColor: 'text-green-400' },
-          { label: 'Posts Today',   value: postsToday,      icon: Send,      iconBg: 'bg-cyan-500/10',   iconColor: 'text-cyan-400' },
-          { label: 'Errors',        value: errorCount,      icon: AlertCircle, iconBg: 'bg-red-500/10',  iconColor: 'text-red-400' },
+          { label: 'Total Devices', value: devices.length, icon: Smartphone },
+          { label: 'Active Now',    value: activeCount,     icon: Zap },
+          { label: 'Posts Today',   value: postsToday,      icon: Send },
+          { label: 'Errors',        value: errorCount,      icon: AlertCircle },
         ].map(s => (
-          <div key={s.label} className="glass-card p-5 flex items-center gap-4">
-            <div className={`w-10 h-10 rounded-xl ${s.iconBg} flex items-center justify-center`}>
-              <s.icon className={`w-5 h-5 ${s.iconColor}`} />
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-text-primary tabular-nums">{s.value}</div>
-              <div className="section-label">{s.label}</div>
+          <div key={s.label} className="glass-card p-6">
+            <span className="section-label block mb-2">{s.label}</span>
+            <div className="flex items-center justify-between">
+              <span style={{ fontFamily: "'DM Serif Display', serif", fontStyle: 'italic', fontSize: '38px', color: '#f5e6d3' }} className="tabular-nums">
+                {s.value}
+              </span>
+              <s.icon className="w-5 h-5" style={{ color: 'rgba(245,230,211,0.18)' }} />
             </div>
           </div>
         ))}
@@ -270,97 +193,92 @@ export default function PhoneFarm() {
       {/* Add device button */}
       <button
         onClick={() => setShowAddForm(prev => !prev)}
-        className="flex items-center gap-2 px-4 py-2.5 rounded-xl btn-ghost text-sm"
+        className="btn-ghost mb-6"
       >
-        <Plus className="w-4 h-4" />
-        Add Device
+        <Plus className="w-4 h-4" /> Add Device
       </button>
 
-      {/* Device grid */}
-      <div className="grid grid-cols-4 gap-4">
-        {showAddForm && (
+      {/* Add form */}
+      {showAddForm && (
+        <div className="mb-6 max-w-md">
           <AddDeviceForm onAdd={handleAddDevice} onCancel={() => setShowAddForm(false)} />
-        )}
+        </div>
+      )}
 
+      {/* Device list — horizontal strip cards */}
+      <div className="flex flex-col gap-1">
         {devices.map(device => {
-          const { label, dotClass, textColor, glowClass } = STATUS_CONFIG[device.status];
+          const { label, color } = STATUS_LABEL[device.status];
           const isBusy = device.status === 'posting' || device.status === 'cooldown';
-          const platformBadge = PLATFORM_BADGE[device.platform] || 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20';
-
+          const isActive = device.status === 'posting';
           return (
-            <div key={device.id} className="glass-card overflow-hidden group relative">
-              {/* Phone frame notch */}
-              <div className="h-1 bg-gradient-to-r from-transparent via-white/[0.06] to-transparent mx-8 rounded-b-full" />
+            <div
+              key={device.id}
+              className="glass-card group flex items-center gap-5 px-6 py-4 transition-all duration-200"
+              style={isActive ? { borderLeft: '2px solid #ff3344', background: 'rgba(255,51,68,0.04)' } : {}}
+            >
+              {/* Device name + platform */}
+              <div className="flex-1 min-w-0 flex items-center gap-4">
+                <Smartphone className="w-5 h-5 shrink-0" style={{ color: 'rgba(245,230,211,0.18)' }} />
+                <div className="min-w-0">
+                  <span style={{ fontFamily: "'DM Serif Display', serif", fontStyle: 'italic', fontSize: '18px', color: '#f5e6d3', display: 'block' }} className="truncate">{device.name}</span>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(245,230,211,0.3)' }}>
+                    {device.platform} {device.account ? `· ${device.account}` : ''}
+                  </span>
+                </div>
+              </div>
 
-              <div className="p-5 space-y-3">
-                {/* Delete button */}
+              {/* Status badge */}
+              <span className="badge shrink-0" style={{ borderColor: color, color }}>
+                {device.status === 'posting' && <Loader2 className="w-2.5 h-2.5 animate-spin" />}
+                {label}
+              </span>
+
+              {/* Battery */}
+              <div className="w-32 shrink-0">
+                <BatteryBar level={device.battery} />
+              </div>
+
+              {/* Posts today */}
+              <span className="tabular-nums shrink-0" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: 'rgba(245,230,211,0.3)', letterSpacing: '0.1em', width: '80px', textAlign: 'right' }}>
+                {device.posts_today} posts
+              </span>
+
+              {/* Actions */}
+              <div className="flex gap-2 shrink-0">
+                {device.status === 'idle' && (
+                  <button onClick={() => void handlePost(device)} className="btn-primary" style={{ fontSize: '11px', padding: '8px 16px' }}>
+                    <Send className="w-3 h-3" /> Post
+                  </button>
+                )}
+                {isBusy && (
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: 'rgba(245,230,211,0.3)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                    {device.status === 'posting' ? 'Posting...' : 'Cooldown'}
+                  </span>
+                )}
                 <button
                   onClick={() => void handleDelete(device.id)}
-                  className="absolute top-3 right-3 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-500/10 text-text-muted hover:text-red-400 transition-all"
+                  className="w-7 h-7 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
+                  style={{ border: '1px solid rgba(245,230,211,0.12)', background: 'transparent' }}
                   title="Delete device"
+                  aria-label={`Delete ${device.name}`}
                 >
-                  <Trash2 className="w-3.5 h-3.5" />
+                  <Trash2 className="w-3.5 h-3.5" style={{ color: 'rgba(245,230,211,0.3)' }} />
                 </button>
-
-                {/* Header */}
-                <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-border-subtle flex items-center justify-center">
-                      <Smartphone className="w-5 h-5 text-text-tertiary" />
-                    </div>
-                    {/* Status LED */}
-                    <span className={`absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-surface-0 ${dotClass} ${glowClass}`} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold text-text-primary truncate">{device.name}</div>
-                    <span className={`badge text-[10px] mt-0.5 ${platformBadge}`}>{device.platform}</span>
-                  </div>
-                </div>
-
-                {/* Account */}
-                <div className="text-xs text-text-muted truncate">{device.account}</div>
-
-                {/* Status */}
-                <div className={`flex items-center gap-2 text-xs font-medium ${textColor}`}>
-                  <span className={`w-1.5 h-1.5 rounded-full ${dotClass}`} />
-                  {label}
-                  {device.status === 'posting' && (
-                    <Loader2 className="w-3 h-3 animate-spin ml-auto" />
-                  )}
-                </div>
-
-                {/* Battery */}
-                <BatteryBar level={device.battery} />
-
-                {/* Posts info */}
-                <div className="flex justify-between text-[10px] text-text-muted">
-                  <span className="tabular-nums">{device.posts_today} posts today</span>
-                  <span>{device.last_post ?? ''}</span>
-                </div>
-
-                {/* Post Now button */}
-                {device.status === 'idle' ? (
-                  <button
-                    onClick={() => void handlePost(device)}
-                    className="w-full py-2 rounded-xl btn-primary text-xs font-medium flex items-center justify-center gap-1.5"
-                  >
-                    <Send className="w-3 h-3" />
-                    Post Now
-                  </button>
-                ) : isBusy ? (
-                  <button
-                    disabled
-                    className="w-full py-2 rounded-xl bg-white/[0.03] border border-border-subtle text-xs font-medium text-text-muted flex items-center justify-center gap-1.5 cursor-not-allowed"
-                  >
-                    <Loader2 className="w-3 h-3 animate-spin" />
-                    {device.status === 'posting' ? 'Posting...' : 'Cooldown...'}
-                  </button>
-                ) : null}
               </div>
             </div>
           );
         })}
       </div>
+
+      {devices.length === 0 && !showAddForm && (
+        <div className="flex flex-col items-center justify-center py-20">
+          <Smartphone className="w-12 h-12 mb-4" style={{ color: 'rgba(245,230,211,0.12)' }} />
+          <h3 style={{ fontFamily: "'DM Serif Display', serif", fontStyle: 'italic', fontSize: '24px', color: 'rgba(245,230,211,0.45)' }}>
+            No devices. <em style={{ color: '#ff3344', fontStyle: 'italic' }}>Add</em> one.
+          </h3>
+        </div>
+      )}
     </div>
   );
 }

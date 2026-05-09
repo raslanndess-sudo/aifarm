@@ -57,3 +57,15 @@ cat AGENTS.md
 cat src/lib/schema.sql
 ```
 Don't explore the whole codebase — wait for PM to point you at specific files.
+
+## Обязательное правило: отчётность через say.sh
+
+Каждый status / done / blocked / ask / handoff отчёт идёт ТОЛЬКО через:
+
+```
+bash .claude/agents/say.sh backend <kind> "<message>"
+```
+
+Никаких исключений. Отчёт только в своей tmux-панели = отчёта нет. PM заворачивает задачу на возврат-в-работу если следующий status/done пропущен мимо chat.md.
+
+Причина: остальные агенты и PM видят прогресс через chat.md. Своя панель невидима.

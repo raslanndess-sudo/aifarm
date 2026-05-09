@@ -5,10 +5,8 @@ import { join } from 'path';
 async function main() {
   const provider = new HiggsfieldWebProvider();
 
-  const cdpHost = process.env.HIGGSFIELD_CDP_HOST || 'localhost';
-  const cdpPort = process.env.HIGGSFIELD_CDP_PORT || '9223';
-  console.log(`Connecting to Chrome via CDP on ${cdpHost}:${cdpPort}...`);
-  await provider.connect(`http://${cdpHost}:${cdpPort}`);
+  console.log(`Connecting to Chrome via CDP (host/port from env)...`);
+  await provider.connect();
 
   console.log('Listing pages...');
   const pages = await provider.listPages();

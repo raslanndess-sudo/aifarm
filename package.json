@@ -7,9 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "higgsfield:canary": "npx tsx scripts/higgsfield-canary.ts"
+    "higgsfield:canary": "npx tsx scripts/higgsfield-canary.ts",
+    "setup-fonts": "npx tsx scripts/setup-fonts.ts"
   },
   "dependencies": {
+    "@fal-ai/client": "^1.10.1",
     "@next/swc-win32-x64-msvc": "^16.2.2",
     "better-sqlite3": "^12.9.0",
     "lucide-react": "^1.7.0",
@@ -17,7 +19,9 @@
     "playwright-core": "^1.59.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "recharts": "^3.8.1"
+    "recharts": "^3.8.1",
+    "sharp": "^0.34.5",
+    "wavesurfer.js": "^7.12.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

@@ -24,36 +24,9 @@ export function initDatabase(): string[] {
     return row.cnt === 0;
   };
 
-  // Videos
-  if (isEmpty('videos')) {
-    const insert = db.prepare(
-      `INSERT INTO videos (title, thumbnail, duration, status, platform, views, style, created_at)
-       VALUES (@title, @thumbnail, @duration, @status, @platform, @views, @style, @created_at)`
-    );
-
-    const statusMap: Record<string, string> = {
-      complete: 'complete',
-      rendering: 'processing',
-      scheduled: 'scheduled',
-      failed: 'failed',
-    };
-
-    const videos = [
-      { title: "Sakura's Awakening - Ep 1", thumbnail: 'https://picsum.photos/seed/v1/320/180', duration: '1:04', status: 'complete', platform: 'TikTok', views: 128400, style: 'Anime', created_at: '2026-04-01' },
-      { title: 'Neon City Chase', thumbnail: 'https://picsum.photos/seed/v2/320/180', duration: '0:58', status: 'rendering', platform: 'Reels', views: 0, style: 'Cyberpunk', created_at: '2026-04-02' },
-      { title: 'Forest Spirit Journey', thumbnail: 'https://picsum.photos/seed/v3/320/180', duration: '1:12', status: 'scheduled', platform: 'Shorts', views: 0, style: 'Ghibli', created_at: '2026-04-02' },
-      { title: 'Iron Titan Rises', thumbnail: 'https://picsum.photos/seed/v4/320/180', duration: '0:47', status: 'complete', platform: 'TikTok', views: 84200, style: 'Mecha', created_at: '2026-03-31' },
-      { title: 'Shadow Duel – Final Arc', thumbnail: 'https://picsum.photos/seed/v5/320/180', duration: '1:30', status: 'complete', platform: 'Reels', views: 210000, style: 'Seinen', created_at: '2026-03-30' },
-      { title: 'Parallel World Gate', thumbnail: 'https://picsum.photos/seed/v6/320/180', duration: '1:05', status: 'failed', platform: 'Shorts', views: 0, style: 'Anime', created_at: '2026-03-29' },
-    ];
-
-    const insertMany = db.transaction(() => {
-      for (const v of videos) {
-        insert.run({ ...v, status: statusMap[v.status] ?? v.status });
-      }
-    });
-    insertMany();
-  }
+  // Videos seed: REMOVED per user request — no mock placeholder videos in Library.
+  // The videos table is now populated only by real generations (via /api/scenario/finalize
+  // and /api/videos POST endpoints). Seed kept for devices/schedule/transactions/etc below.
 
   // Devices
   if (isEmpty('devices')) {
@@ -81,31 +54,8 @@ export function initDatabase(): string[] {
     insertMany();
   }
 
-  // Schedule (video_id / device_id map to insertion order 1-6 / 1-8)
-  if (isEmpty('schedule')) {
-    const insert = db.prepare(
-      `INSERT INTO schedule (video_id, device_id, platform, account, scheduled_at, status)
-       VALUES (@video_id, @device_id, @platform, @account, @scheduled_at, @status)`
-    );
-
-    const scheduleRows = [
-      { video_id: 1, device_id: 1, platform: 'TikTok', account: '@sakura_stories', scheduled_at: '2026-04-02T09:00:00', status: 'pending' },
-      { video_id: 2, device_id: 2, platform: 'Reels', account: '@neon_clips', scheduled_at: '2026-04-02T12:30:00', status: 'pending' },
-      { video_id: 3, device_id: 3, platform: 'Shorts', account: '@forest_tales', scheduled_at: '2026-04-02T15:00:00', status: 'pending' },
-      { video_id: 4, device_id: 4, platform: 'TikTok', account: '@mecha_verse', scheduled_at: '2026-04-01T18:00:00', status: 'posted' },
-      { video_id: 5, device_id: 5, platform: 'Reels', account: '@shadow_arc', scheduled_at: '2026-04-01T20:00:00', status: 'posted' },
-      { video_id: 6, device_id: 6, platform: 'Shorts', account: '@gate_world', scheduled_at: '2026-04-01T14:00:00', status: 'failed' },
-      { video_id: 2, device_id: 7, platform: 'TikTok', account: '@cyber_dream', scheduled_at: '2026-04-03T10:00:00', status: 'pending' },
-      { video_id: 3, device_id: 8, platform: 'Reels', account: '@spirit_run', scheduled_at: '2026-04-03T13:00:00', status: 'pending' },
-    ];
-
-    const insertMany = db.transaction(() => {
-      for (const s of scheduleRows) {
-        insert.run(s);
-      }
-    });
-    insertMany();
-  }
+  // Schedule seed: REMOVED — referenced mock video ids 1-6 which no longer get seeded.
+  // Schedule rows are now created at runtime by the scheduling flow against real videos.
 
   // Transactions
   if (isEmpty('transactions')) {
@@ -154,6 +104,10 @@ export function initDatabase(): string[] {
     });
     insertMany();
   }
+
+  // Ensure provider settings exist (idempotent)
+  db.prepare(`INSERT OR IGNORE INTO settings (key, value) VALUES ('image_provider', 'leonardo')`).run();
+  db.prepare(`INSERT OR IGNORE INTO settings (key, value) VALUES ('video_provider', 'kling-direct')`).run();
 
   // Settings
   if (isEmpty('settings')) {

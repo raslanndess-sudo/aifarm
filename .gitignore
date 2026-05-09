@@ -1,7 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
-/node_modules
+# dependencies (any depth — root, remotion/, etc.)
+node_modules/
 /.pnp
 .pnp.*
 .yarn/*
@@ -36,6 +36,10 @@ yarn-error.log*
 # database
 /data/
 
+# generated media (voice previews, video clips)
+/public/generations/
+/public/voice-previews/
+
 # agent team runtime (live chat resets on start, panes.env generated per session)
 /.claude/agents/chat.md
 /.claude/agents/panes.env
@@ -57,3 +61,17 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# runtime logs
+*.log
+
+# agent runtime dispatches / live chats
+/.claude/agents/_*_dispatch.txt
+/.claude/agents/_be_watchdog.sh
+/.claude/agents/chat-*.md
+
+# remotion — heavy assets / broken bundles (regen via npx remotion install-whisper-cpp)
+/remotion/whisper-bin-x64.zip
+/remotion/public/video/hp.mp4
+/remotion/build/
+/remotion/out/
